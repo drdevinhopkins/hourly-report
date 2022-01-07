@@ -5,9 +5,9 @@ name: Update data with current hourly report
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
   schedule:
     # * is a special character in YAML so you have to quote this string
     - cron: "10,15,20,25,30 * * * *"
