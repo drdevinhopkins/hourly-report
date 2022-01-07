@@ -50,10 +50,10 @@ columns = [
 ]
 
 url = "https://www.dropbox.com/s/2y4xn6hbqgzop8y/HourlyReport.pdf?dl=1"
-df = tabula.read_pdf(url, pages=1, area=[[190, 6, 206, 1002]])[0]
+df = tabula.read_pdf(url, pages=1, area=[[190, 6, 206, 1002]], silent=True)[0]
 df.columns = columns
 
-df2 = tabula.read_pdf(url, pages=1, area=[[190, 308, 215, 341]])[0]
+df2 = tabula.read_pdf(url, pages=1, area=[[190, 308, 215, 341]], silent=True)[0]
 
 df3 = pd.DataFrame(
     [{"Total Stretcher pts": df2.columns[0], "Triage hallway pts": df2.columns[1]}]
