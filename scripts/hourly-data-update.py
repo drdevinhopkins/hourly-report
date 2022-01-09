@@ -113,3 +113,15 @@ newColumns = [
 df5 = df4[newColumns]
 
 df5.to_csv("data/current.csv", index=False)
+
+df6 = pd.read_csv("data/current.csv")
+
+recent = pd.read_csv("data/recent.csv")
+
+df7 = (
+    pd.concat([recent, df6], ignore_index=True)
+    .sort_values(by=["Date", "Time"], ascending=False)
+    .drop_duplicates(keep="first")
+)
+
+df7.to_csv("data/recent.csv", index=False)
