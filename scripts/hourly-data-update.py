@@ -49,7 +49,7 @@ columns = [
     "Psych pts waiting for admission",
 ]
 
-url = "https://www.dropbox.com/s/hbsj30oogahmtgh/HourlyReport.pdf?dl=1"
+url = "https://www.dropbox.com/s/ckijmipu33z3feg/HourlyReport.pdf?dl=1"
 df = tabula.read_pdf(url, pages=1, area=[[190, 6, 206, 1002]], silent=True)[0]
 df.columns = columns
 
