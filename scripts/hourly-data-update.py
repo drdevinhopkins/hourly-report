@@ -1,101 +1,5 @@
 import pandas as pd
 import tabula
-import dropbox
-
-import os
-import argparse
-import contextlib
-import datetime
-import os
-import six
-import sys
-import time
-import unicodedata
-import dropbox
-
-dropbox_api_key = os.environ["DROPBOX_API_KEY"]
-dbx = dropbox.Dropbox(dropbox_api_key)
-dbx.users_get_current_account()
-print("connected to dropbox")
-
-
-def upload(dbx, fullname, folder, subfolder, name, overwrite=False):
-
-    # from datetime import date, timedelta
-
-    """Upload a file.
-    Return the request response, or None in case of error.
-    """
-    path = "/%s/%s/%s" % (folder, subfolder.replace(os.path.sep, "/"), name)
-    while "//" in path:
-        path = path.replace("//", "/")
-    mode = (
-        dropbox.files.WriteMode.overwrite if overwrite else dropbox.files.WriteMode.add
-    )
-    mtime = os.path.getmtime(fullname)
-    with open(fullname, "rb") as f:
-        data = f.read()
-    # with stopwatch('upload %d bytes' % len(data)):
-    try:
-        res = dbx.files_upload(
-            data,
-            path,
-            mode,
-            client_modified=datetime.datetime(*time.gmtime(mtime)[:6]),
-            mute=True,
-        )
-    except dropbox.exceptions.ApiError as err:
-        print("*** API error", err)
-        return None
-    print("uploaded as", res.name.encode("utf8"))
-    return res
-
-
-def download(dbx, folder, subfolder, name):
-    """Download a file.
-    Return the bytes of the file, or None if it doesn't exist.
-    """
-    path = "/%s/%s/%s" % (folder, subfolder.replace(os.path.sep, "/"), name)
-    while "//" in path:
-        path = path.replace("//", "/")
-    try:
-        md, res = dbx.files_download(path)
-    except dropbox.exceptions.HttpError as err:
-        print("*** HTTP error", err)
-        return None
-    data = res.content
-    print(len(data), "bytes; md:", md)
-    with open(name, "wb") as f:
-        f.write(res.content)
-    return data
-
-
-def list_folder(dbx, folder, subfolder):
-    """List a folder.
-    Return a dict mapping unicode filenames to
-    FileMetadata|FolderMetadata entries.
-    """
-    path = "/%s/%s" % (folder, subfolder.replace(os.path.sep, "/"))
-    while "//" in path:
-        path = path.replace("//", "/")
-    path = path.rstrip("/")
-    try:
-        res = dbx.files_list_folder(path)
-    except dropbox.exceptions.ApiError as err:
-        print("Folder listing failed for", path, "-- assumed empty:", err)
-        return {}
-    else:
-        # rv = {}
-        # for entry in res.entries:
-        #     rv[entry.name] = entry
-        # return rv
-        rv = []
-        for entry in res.entries:
-            rv.append(entry)
-        return rv
-
-
-download(dbx, "jgh-ed-hourly-report", "", "HourlyReport.pdf")
 
 columns = [
     "Date",
@@ -145,7 +49,7 @@ columns = [
     "Psych pts waiting for admission",
 ]
 
-url = "HourlyReport.pdf"
+url = "https://www.dropbox.com/s/hbsj30oogahmtgh/HourlyReport.pdf?dl=1"
 df = tabula.read_pdf(url, pages=1, area=[[190, 6, 206, 1002]], silent=True)[0]
 df.columns = columns
 
