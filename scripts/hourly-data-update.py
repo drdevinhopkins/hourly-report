@@ -125,3 +125,13 @@ df7 = (
 )
 
 df7.to_csv("data/recent.csv", index=False)
+
+archive = pd.read_csv("data/archive.csv")
+
+df8 = (
+    pd.concat([archive, df6], ignore_index=True)
+    .sort_values(by=["Date", "Time"], ascending=False)
+    .drop_duplicates(keep="first")
+)
+
+df8.to_csv("data/archive.csv", index=False)
