@@ -139,8 +139,8 @@ df8.to_csv("data/since-2020.csv", index=False)
 
 # Clean up datetimes
 
-df = pd.read_csv("data/recent.csv")
+df9 = pd.read_csv("data/recent.csv")
 
-df["ds"] = pd.to_datetime(df["Date"] + " " + (df["Time"] - 1).astype(str) + ":00")
+df9["ds"] = pd.to_datetime(df9["Date"] + " " + (df9["Time"] - 1).astype(str) + ":00")
 
-df.to_csv("data/recent-clean.csv", index=False)
+df9.to_csv("data/recent-clean.csv", index=False)
