@@ -135,3 +135,12 @@ df8 = (
 )
 
 df8.to_csv("data/since-2020.csv", index=False)
+
+
+# Clean up datetimes
+
+df = pd.read_csv("data/recent.csv")
+
+df["ds"] = pd.to_datetime(df["Date"] + " " + (df["Time"] - 1).astype(str) + ":00")
+
+df.to_csv("data/recent-clean.csv", index=False)
