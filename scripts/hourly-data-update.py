@@ -1,5 +1,6 @@
 import pandas as pd
 import tabula
+import datetime
 
 columns = [
     "Date",
@@ -53,7 +54,8 @@ url = "https://www.dropbox.com/s/ckijmipu33z3feg/HourlyReport.pdf?dl=1"
 df = tabula.read_pdf(url, pages=1, area=[[190, 6, 206, 1002]], silent=True)[0]
 df.columns = columns
 
-df2 = tabula.read_pdf(url, pages=1, area=[[190, 308, 215, 341]], silent=True)[0]
+df2 = tabula.read_pdf(url, pages=1, area=[
+                      [190, 308, 215, 341]], silent=True)[0]
 
 df3 = pd.DataFrame(
     [{"Total Stretcher pts": df2.columns[0], "Triage hallway pts": df2.columns[1]}]
@@ -141,6 +143,9 @@ df8.to_csv("data/since-2020.csv", index=False)
 
 df9 = pd.read_csv("data/recent.csv")
 
-df9["ds"] = pd.to_datetime(df9["Date"] + " " + (df9["Time"] - 1).astype(str) + ":00")
+hours_added = datetime.timedelta(hours=1)
+
+df9["ds"] = pd.to_datetime(
+    df9["Date"] + " " + (df9["Time"] - 1).astype(str) + ":00") + hours_added
 
 df9.to_csv("data/recent-clean.csv", index=False)
