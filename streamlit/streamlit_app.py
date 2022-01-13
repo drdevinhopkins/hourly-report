@@ -9,7 +9,7 @@ st.title("Hourly Report")
 
 df = pd.read_csv('../data/recent-clean.csv')
 
-df = df.set_index('ds').head(72)
+df = df.set_index('ds').head(36)
 
 st.write(df.head(5))
 
@@ -36,13 +36,15 @@ with col4:
     st.metric(label="Ambulances", value=df['Ambulances cum'].tolist()[0],
               delta=df['Ambulances cum'].tolist()[0]-df['Ambulances cum'].tolist()[1])
 
+inflow_chart_select = st.multiselect('',
+                                     ['Total Inflow hrly', 'Total Inflow cum', 'Stretcher Pts hrly', 'Ambulatory Pts hrly', 'Ambulances hrly'])
+# inflow_chart_hrly_cum = st.radio('', ['hrly', 'cum'])
 fig = go.Figure()
-# fig.update_layout(title_text="Inflow",
-#                   title_font_size=18)
-fig.add_trace(go.Scatter(x=df.index, y=df['Total Inflow hrly'], mode='lines',
-                         name='Total Inflow', showlegend=True))
-fig.add_trace(go.Scatter(x=df.index, y=df['Stretcher Pts hrly'], mode='lines',
-                         name='Stretcher Inflow', showlegend=True))
-fig.add_trace(go.Scatter(x=df.index, y=df['Ambulatory Pts hrly'], mode='lines',
-                         name='Stretcher Inflow', showlegend=True))
+for inflow_line in inflow_chart_select:
+    fig.add_trace(go.Scatter(x=df.index, y=df[inflow_line], mode='lines',
+                             name=inflow_line, showlegend=True))
+# fig.add_trace(go.Scatter(x=df.index, y=df['Stretcher Pts hrly'], mode='lines',
+#                          name='Stretcher Inflow', showlegend=True))
+# fig.add_trace(go.Scatter(x=df.index, y=df['Ambulatory Pts hrly'], mode='lines',
+#                          name='Stretcher Inflow', showlegend=True))
 st.plotly_chart(fig)
