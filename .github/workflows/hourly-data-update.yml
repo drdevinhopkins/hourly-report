@@ -30,7 +30,10 @@ jobs:
         uses: zcong1993/setup-timezone@master
         with:
           timezone: America/Toronto
-      - name: Run the script
+      - name: Update data
         run: |
           python scripts/hourly-data-update.py
+      - name: Make forecast
+        run: |
+          python scripts/make-forecast.py
       - uses: stefanzweifel/git-auto-commit-action@v4
