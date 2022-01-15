@@ -90,4 +90,4 @@ fig.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
 fig.update_yaxes(title_text="Hourly Inflow", secondary_y=False)
 fig.update_yaxes(title_text="Total Inflow", secondary_y=True)
 
-st.plotly_chart(fig, use_container_width=True, staticPlot=True)
+st.plotly_chart(fig, use_container_width=True, config={'staticPlot': True})
