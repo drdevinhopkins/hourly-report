@@ -82,9 +82,9 @@ fig = make_subplots(specs=[[{"secondary_y": True}]])
 # fig.add_trace(go.Scatter(x=df.ds, y=df[inflow_line], mode='lines',
 #                          name=inflow_line, showlegend=True))
 fig.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
-                         ['Total Inflow hrly'], mode='lines', name='Hourly Inflow', showlegend=True), secondary_y=False)
+                         ['Total Inflow hrly'], mode='lines', name='Hourly Inflow', showlegend=False), secondary_y=False)
 fig.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
-                         ['Total Inflow cum'], mode='lines', name='Total Inflow', showlegend=True), secondary_y=True)
+                         ['Total Inflow cum'], mode='lines', name='Total Inflow', showlegend=False), secondary_y=True)
 # fig.add_trace(go.Scatter(x=df.index, y=df['Ambulatory Pts hrly'], mode='lines',
 #                          name='Stretcher Inflow', showlegend=True))
 fig.update_yaxes(title_text="Hourly Inflow", secondary_y=False)
