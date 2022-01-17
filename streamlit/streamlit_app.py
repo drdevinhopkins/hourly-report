@@ -45,7 +45,8 @@ for column in df.columns.tolist():
         continue
 
 if len(current_alerts) > 0:
-    [st.write(alert) for alert in current_alerts]
+    for alert in current_alerts:
+        st.write(alert)
 else:
     st.write('No active alerts')
 
