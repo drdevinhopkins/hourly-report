@@ -5,6 +5,8 @@ import datetime
 df = pd.read_csv('data/since-2020.csv')
 df.ds = pd.to_datetime(df.ds)
 
+df = df.dropna(axis=0)
+
 output = pd.DataFrame()
 
 for column in df.columns.to_list():
