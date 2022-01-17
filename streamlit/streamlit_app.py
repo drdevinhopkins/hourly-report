@@ -12,6 +12,8 @@ df = pd.read_csv(
 
 df.ds = pd.to_datetime(df.ds)
 
+st.write('Most recent update: ' + str(df.iloc[0].ds))
+
 forecast = pd.read_csv(
     'https://raw.githubusercontent.com/drdevinhopkins/hourly-report/main/data/forecast.csv')
 
@@ -127,16 +129,38 @@ with col3:
     st.metric(label="Waiting for Admission", value=current['Pts.waiting for admission CUM'],
               delta=int(current['Pts.waiting for admission CUM']-df.iloc[1]['Pts.waiting for admission CUM']))
 
-st.header('Stretchers')
-col1, col2, col3 = st.columns(3)
+st.header('To Be Seen')
+
+col1, col2, col3, col4 = st.columns(4)
 with col1:
-    st.metric(label="Total Stretcher Patients", value=current['Total Stretcher pts'],
-              delta=int(current['Total Stretcher pts']-df.iloc[1]['Total Stretcher pts']))
+    st.metric(label="Green", value=current['Green Pts TBS'],
+              delta=int(current['Green Pts TBS']-df.iloc[1]['Green Pts TBS']))
 
 with col2:
-    st.metric(label="Admissions", value=current['Admissions cum'],
-              delta=int(current['Admissions cum']-df.iloc[1]['Admissions cum']))
+    st.metric(label="Yellow", value=current['Yellow Pts TBS'],
+              delta=int(current['Yellow Pts TBS']-df.iloc[1]['Yellow Pts TBS']))
 
 with col3:
-    st.metric(label="Waiting for Admission", value=current['Pts.waiting for admission CUM'],
-              delta=int(current['Pts.waiting for admission CUM']-df.iloc[1]['Pts.waiting for admission CUM']))
+    st.metric(label="Orange", value=current['Orange Pts TBS'],
+              delta=int(current['Orange Pts TBS']-df.iloc[1]['Orange Pts TBS']))
+with col4:
+    st.metric(label="Total Pods", value=current['Total Pod TBS'],
+              delta=int(current['Total Pod TBS']-df.iloc[1]['Total Pod TBS']))
+
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    st.metric(label="Vertical", value=current['Stretcher Pts TBS in Vertical']+current['Ambulatory Pts TBS in Vertical'],
+              delta=int((current['Stretcher Pts TBS in Vertical']+current['Ambulatory Pts TBS in Vertical'])-(df.iloc[1]['Stretcher Pts TBS in Vertical']+df.iloc[1]['Ambulatory Pts TBS in Vertical'])))
+
+with col2:
+    st.metric(label="QTrack", value=current['QTrack Patients TBS'],
+              delta=int(current['QTrack Patients TBS']-df.iloc[1]['QTrack Patients TBS']))
+
+with col3:
+    st.metric(label="Garage", value=current['GARAGE patient TBS'],
+              delta=int(current['GARAGE patient TBS']-df.iloc[1]['GARAGE patient TBS']))
+with col4:
+    st.metric(label="Total Ambulatory", value=current['Total Vertical TBS'],
+              delta=int(current['Total Vertical TBS']-df.iloc[1]['Total Vertical TBS']))
+
+# st.write(df.columns.tolist())
