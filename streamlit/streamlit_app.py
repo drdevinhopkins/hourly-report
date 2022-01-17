@@ -12,6 +12,8 @@ df = pd.read_csv(
 
 df.ds = pd.to_datetime(df.ds)
 
+st.write(df)
+
 forecast = pd.read_csv(
     'https://raw.githubusercontent.com/drdevinhopkins/hourly-report/main/data/forecast.csv')
 
