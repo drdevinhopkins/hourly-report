@@ -4,7 +4,7 @@ import datetime
 df = pd.read_csv('data/daily-visits.csv')
 df.ds = pd.to_datetime(df.ds)
 
-archive = pd.read_csv('../data/since-2020.csv')
+archive = pd.read_csv('data/since-2020.csv')
 archive.ds = pd.to_datetime(archive.ds)
 archive = archive.set_index('ds')
 
