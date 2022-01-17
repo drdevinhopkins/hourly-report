@@ -3,9 +3,7 @@ from prophet import Prophet
 import datetime
 
 df = pd.read_csv('data/since-2020.csv')
-df['ds'] = pd.to_datetime(df['Date'] + ' ' + (df['Time'] -
-                                              1).astype(str) + ':00') + datetime.timedelta(hours=1)
-df = df.sort_values(by='ds', ascending=False)
+df.ds = pd.to_datetime(df.ds)
 
 output = pd.DataFrame()
 

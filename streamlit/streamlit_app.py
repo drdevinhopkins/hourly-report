@@ -8,7 +8,7 @@ from plotly.subplots import make_subplots
 st.title("Hourly Report")
 
 df = pd.read_csv(
-    'https://raw.githubusercontent.com/drdevinhopkins/hourly-report/main/data/recent-clean.csv')
+    'https://raw.githubusercontent.com/drdevinhopkins/hourly-report/main/data/recent.csv')
 
 df.ds = pd.to_datetime(df.ds)
 
