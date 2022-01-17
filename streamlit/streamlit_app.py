@@ -20,9 +20,11 @@ forecast.ds = pd.to_datetime(forecast.ds)
 
 current = df.iloc[0]
 
+st.write(current.astype(str))
+
 current_ds = df.head(1).iloc[0].ds
 
-st.write(df.head(1).set_index('ds').drop(['Date', 'Time'], axis=1))
+# st.write(df.head(1).set_index('ds').drop(['Date', 'Time'], axis=1))
 
 st.header('Alerts')
 
@@ -82,12 +84,47 @@ fig = make_subplots(specs=[[{"secondary_y": True}]])
 # fig.add_trace(go.Scatter(x=df.ds, y=df[inflow_line], mode='lines',
 #                          name=inflow_line, showlegend=True))
 fig.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
-                         ['Total Inflow hrly'], mode='lines', name='Hourly Inflow', showlegend=False), secondary_y=False)
+                         ['Total Inflow hrly'], mode='markers', name='Hourly Inflow', showlegend=False, line=dict(color='red', width=4)), secondary_y=False)
+fig.add_trace(go.Scatter(x=forecast[forecast.ds.dt.date == today].ds, y=forecast[forecast.ds.dt.date == today]
+                         ['Total Inflow hrly_yhat'], mode='lines', name='Hourly Inflow (expected)', showlegend=False, line=dict(color='red', width=1, dash='dot')), secondary_y=False)
+
 fig.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
-                         ['Total Inflow cum'], mode='lines', name='Total Inflow', showlegend=False), secondary_y=True)
+                         ['Total Inflow cum'], mode='lines', name='Total Inflow', showlegend=False, line=dict(color='blue', width=4)), secondary_y=True)
+# fig.add_trace(go.Scatter(x=forecast[forecast.ds.dt.date == today].ds, y=forecast[forecast.ds.dt.date == today]
+#                          ['Total Inflow cum_yhat'], mode='lines', name='Total Inflow (expected)', showlegend=True), secondary_y=True)
 # fig.add_trace(go.Scatter(x=df.index, y=df['Ambulatory Pts hrly'], mode='lines',
 #                          name='Stretcher Inflow', showlegend=True))
 fig.update_yaxes(title_text="Hourly Inflow", secondary_y=False)
 fig.update_yaxes(title_text="Total Inflow", secondary_y=True)
 
-st.plotly_chart(fig, use_container_width=True, config={'staticPlot': True})
+st.plotly_chart(fig, use_container_width=True,
+                config={'staticPlot': True}
+                )
+
+st.header('Outflow')
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.metric(label="Admission Requests", value=current['Adm. requests cum'],
+              delta=int(current['Adm. requests cum']-df.iloc[1]['Adm. requests cum']))
+
+with col2:
+    st.metric(label="Admissions", value=current['Admissions cum'],
+              delta=int(current['Admissions cum']-df.iloc[1]['Admissions cum']))
+
+with col3:
+    st.metric(label="Waiting for Admission", value=current['Pts.waiting for admission CUM'],
+              delta=int(current['Pts.waiting for admission CUM']-df.iloc[1]['Pts.waiting for admission CUM']))
+
+st.header('Stretchers')
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.metric(label="Total Stretcher Patients", value=current['Total Stretcher pts'],
+              delta=int(current['Total Stretcher pts']-df.iloc[1]['Total Stretcher pts']))
+
+with col2:
+    st.metric(label="Admissions", value=current['Admissions cum'],
+              delta=int(current['Admissions cum']-df.iloc[1]['Admissions cum']))
+
+with col3:
+    st.metric(label="Waiting for Admission", value=current['Pts.waiting for admission CUM'],
+              delta=int(current['Pts.waiting for admission CUM']-df.iloc[1]['Pts.waiting for admission CUM']))
