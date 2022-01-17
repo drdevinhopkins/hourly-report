@@ -51,17 +51,47 @@ columns = [
 ]
 
 url = "https://www.dropbox.com/s/ckijmipu33z3feg/HourlyReport.pdf?dl=1"
-df = tabula.read_pdf(url, pages=1, area=[[190, 6, 206, 1002]], silent=True)[0]
-df.columns = columns
+output = []
+first_row = tabula.read_pdf(
+    url, pages=1, area=[[200, 6, 206, 1002]], silent=True)[0]
+first_row = first_row.columns.tolist()
+first_row_dict = dict(zip(columns, first_row))
+output.append(first_row_dict)
+first_row_date = first_row_dict['Date']
+for row_start in [211, 223, 235, 247, 259, 271, 283]:
+    try:
+        new_row = tabula.read_pdf(
+            url, pages=1, area=[[row_start, 0, row_start+7, 1002]], silent=True)[0]
+        new_row = new_row.columns.tolist()
+        new_row.insert(0, first_row_date)
+        new_row_dict = dict(zip(columns, new_row))
+        output.append(new_row_dict)
+    except:
+        break
 
-df2 = tabula.read_pdf(url, pages=1, area=[
-                      [190, 308, 215, 341]], silent=True)[0]
+output_df = pd.DataFrame(output)
 
-df3 = pd.DataFrame(
-    [{"Total Stretcher pts": df2.columns[0], "Triage hallway pts": df2.columns[1]}]
-)
+missing_columns = []
+first_row = tabula.read_pdf(
+    url, pages=1, area=[[200, 308, 215, 341]], silent=True)[0]
+first_row = first_row.columns.tolist()
+first_row_dict = dict(
+    zip(['Total Stretcher pts', 'Triage hallway pts'], first_row))
+missing_columns.append(first_row_dict)
+for row_start in [212, 224, 236, 248, 260, 272, 284]:
+    try:
+        new_row = tabula.read_pdf(
+            url, pages=1, area=[[row_start, 308, row_start+8, 341]], silent=True)[0]
+        new_row = new_row.columns.tolist()
+        new_row_dict = dict(
+            zip(['Total Stretcher pts', 'Triage hallway pts'], new_row))
+        missing_columns.append(new_row_dict)
+    except:
+        break
+missing_columns_df = pd.DataFrame(missing_columns)
 
-df4 = pd.concat([df, df3], axis=1)
+output_df = pd.concat([output_df, missing_columns_df], axis=1)
+output_df = output_df.dropna()
 
 newColumns = [
     "Date",
@@ -112,40 +142,29 @@ newColumns = [
     "Psych Stretcher Pts1pt",
     "Psych pts waiting for admission",
 ]
-df5 = df4[newColumns]
+output_df = output_df[newColumns]
+for column in output_df.columns.tolist():
+    if column in ['Date']:
+        continue
+    output_df[column] = output_df[column].astype('float').astype('int')
 
-df5.to_csv("data/current.csv", index=False)
+output_df["ds"] = pd.to_datetime(
+    output_df["Date"] + " " + (output_df["Time"] - 1).astype(str) + ":00") + datetime.timedelta(hours=1)
 
-df6 = pd.read_csv("data/current.csv")
+output_df['Total Pod TBS'] = output_df['Green Pts TBS'] + \
+    output_df['Yellow Pts TBS']+output_df['Orange Pts TBS']
+output_df['Total Vertical TBS'] = output_df['Stretcher Pts TBS in Vertical'] + \
+    output_df['Ambulatory Pts TBS in Vertical'] + \
+    output_df['QTrack Patients TBS']+output_df['GARAGE patient TBS']
 
-recent = pd.read_csv("data/recent.csv")
+since2020_df = pd.read_csv("data/since-2020.csv")
+since2020_df.ds = pd.to_datetime(since2020_df.ds)
 
-df7 = (
-    pd.concat([recent, df6], ignore_index=True)
-    .sort_values(by=["Date", "Time"], ascending=False)
-    .drop_duplicates(keep="first")
-)
+since2020_df = pd.concat([since2020_df, output_df], ignore_index=True)
 
-df7.to_csv("data/recent.csv", index=False)
+since2020_df = since2020_df.drop_duplicates(
+    subset='ds', keep="last").sort_values(by=['ds'], ascending=False)
 
-archive = pd.read_csv("data/since-2020.csv")
-
-df8 = (
-    pd.concat([archive, df6], ignore_index=True)
-    .sort_values(by=["Date", "Time"], ascending=False)
-    .drop_duplicates(keep="first")
-)
-
-df8.to_csv("data/since-2020.csv", index=False)
-
-
-# Clean up datetimes
-
-df9 = pd.read_csv("data/recent.csv")
-
-hours_added = datetime.timedelta(hours=1)
-
-df9["ds"] = pd.to_datetime(
-    df9["Date"] + " " + (df9["Time"] - 1).astype(str) + ":00") + hours_added
-
-df9.to_csv("data/recent-clean.csv", index=False)
+since2020_df.to_csv("data/since-2020.csv", index=False)
+since2020_df.head(14*24).to_csv("data/recent.csv", index=False)
+since2020_df.head(1).to_csv('data/current.csv', index=False)
