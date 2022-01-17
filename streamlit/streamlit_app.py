@@ -12,8 +12,6 @@ df = pd.read_csv(
 
 df.ds = pd.to_datetime(df.ds)
 
-st.write(df)
-
 forecast = pd.read_csv(
     'https://raw.githubusercontent.com/drdevinhopkins/hourly-report/main/data/forecast.csv')
 
@@ -21,8 +19,6 @@ forecast.ds = pd.to_datetime(forecast.ds)
 # df = df.set_index('ds').head(36)
 
 current = df.iloc[0]
-
-st.write(current.astype(str))
 
 current_ds = df.head(1).iloc[0].ds
 
@@ -34,12 +30,23 @@ st.header('Alerts')
 
 current_forecast = forecast.set_index('ds').loc[current_ds]
 
+current_alerts = []
+
 for column in df.columns.tolist():
     if column in ['Date', 'Time', 'ds']:
         continue
-    if current[column] > current_forecast[column+'_yhat_upper']:
-        st.write(column + ': ' + str(current[column]) + ' (' +
-                 str(round(current_forecast[column+'_yhat_upper'], 1)) + ')')
+    try:
+        if current[column] > current_forecast[column+'_yhat_upper']:
+            current_alerts.append(column + ': ' + str(current[column]) + ' (' +
+                                  str(round(current_forecast[column+'_yhat_upper'], 1)) + ')')
+    except:
+        continue
+
+if len(current_alerts) > 0:
+    [st.write(alert) for alert in current_alerts]
+else:
+    st.write('No active alerts')
+
 recent_alerts = st.expander('History (last 4 hours)')
 with recent_alerts:
     # st.subheader('Last 4 hours')
@@ -50,9 +57,12 @@ with recent_alerts:
         for column in df.columns.tolist():
             if column in ['Date', 'Time', 'ds']:
                 continue
-            if target_report[column] > target_forecast[column+'_yhat_upper']:
-                st.write(column + ': ' + str(target_report[column]) + ' (' +
-                         str(round(target_forecast[column+'_yhat_upper'], 1)) + ')')
+            try:
+                if target_report[column] > target_forecast[column+'_yhat_upper']:
+                    st.write(column + ': ' + str(target_report[column]) + ' (' +
+                             str(round(target_forecast[column+'_yhat_upper'], 1)) + ')')
+            except:
+                continue
 
 st.header('Inflow')
 
