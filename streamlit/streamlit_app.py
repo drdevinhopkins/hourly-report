@@ -89,7 +89,9 @@ with col4:
               delta=int(current['Ambulances hrly']))
 
 
-today = pd.to_datetime("today").date()
+today = df.iloc[0].ds.date()
+
+st.write(today)
 
 # inflow_chart_select = st.multiselect('',
 #                                      ['Total Inflow hrly', 'Total Inflow cum', 'Stretcher Pts hrly', 'Ambulatory Pts hrly', 'Ambulances hrly'])
