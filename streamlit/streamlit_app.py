@@ -75,7 +75,7 @@ with alerts_col:
         with alert_section:
             st.write('**No active alerts**')
 
-    recent_alerts = st.expander('History (last 4 hours)')
+    recent_alerts = st.expander('History (last 4 hours)', expanded=True)
     with recent_alerts:
         # st.subheader('Last 4 hours')
         for lag in [1, 2, 3, 4]:
