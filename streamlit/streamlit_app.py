@@ -5,113 +5,190 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import datetime
 
+st.set_page_config(layout="wide")
 
-st.title("Hourly Report")
 
 df = pd.read_csv(
     'https://raw.githubusercontent.com/drdevinhopkins/hourly-report/main/data/recent.csv')
 
 df.ds = pd.to_datetime(df.ds)
 
-st.write('Updated ' + str(df.iloc[0].ds))
-
 forecast = pd.read_csv(
     'https://raw.githubusercontent.com/drdevinhopkins/hourly-report/main/data/forecast.csv')
 
 forecast.ds = pd.to_datetime(forecast.ds)
-# df = df.set_index('ds').head(36)
 
 current = df.iloc[0]
 
 current_ds = df.head(1).iloc[0].ds
 
-# st.write(df.head(1).set_index('ds').drop(['Date', 'Time'], axis=1))
+title_col, update_col = st.columns([4, 1])
 
-st.subheader('Alerts')
+with title_col:
+    st.title("Hourly Report")
 
-alert_section = st.empty()
+with update_col:
+    st.write(' ')
+    st.write(' ')
+    st.write('Updated ' + str(df.iloc[0].ds))
 
-# st.subheader('Current')
+alerts_col, spacer, subheaders, col1, col2, col3, col4 = st.columns([
+                                                                    3, 1, 2, 2, 2, 2, 2])
 
-current_forecast = forecast.set_index('ds').loc[current_ds]
+with alerts_col:
 
-current_alerts = []
+    st.subheader('Alerts')
+
+    alert_section = st.empty()
+
+    current_forecast = forecast.set_index('ds').loc[current_ds]
+
+    current_alerts = []
+
+    filter_expander = st.expander('Filters')
+
+    with filter_expander:
+        alert_type_select = st.multiselect('Filter by type', [
+            column for column in df.columns.tolist() if column not in ['Date', 'Time', 'ds']],
+            ['Total Inflow hrly', 'Ambulances hrly', 'Total Stretcher pts', 'Triage hallway pts',
+             'Triage hallway pts TBS', 'Resus Pts', 'Totalpts in PODs except Psych', 'Green Pts TBS',
+             'Yellow Pts TBS', 'Orange Pts TBS', 'Consults > 2h in PODS except IM', 'Consult for IM >4h in PODS',
+             'CTs reqs > 2 h in PODs', 'Post POD (Family room)', 'QTrack Patients TBS', 'GARAGE patient TBS',
+             'Consults > 2h in Vertical Except IM', 'Consult for IM >4h in Vertical', 'Plain films reqs > 2 hr in Vertical', 'CTs reqs > 2 hrs in Vertical',
+             'Total Pod TBS', 'Total Vertical TBS'])
+
+    for column in alert_type_select:
+        if column in ['Date', 'Time', 'ds']:
+            continue
+        try:
+            if current[column] > current_forecast[column+'_yhat_upper']:
+                current_alerts.append(column + ': ' + str(current[column]) + ' (' +
+                                      str(round(current_forecast[column+'_yhat_upper'], 1)) + ')')
+        except:
+            continue
+
+    if len(current_alerts) > 0:
+        for alert in current_alerts:
+            with alert_section:
+                st.write('**• '+alert+'**')
+    else:
+        with alert_section:
+            st.write('**No active alerts**')
+
+    recent_alerts = st.expander('History (last 4 hours)')
+    with recent_alerts:
+        # st.subheader('Last 4 hours')
+        for lag in [1, 2, 3, 4]:
+            target_report = df.iloc[lag]
+            target_forecast = forecast.set_index('ds').loc[target_report.ds]
+            st.markdown('**'+str(target_report.ds)+'**')
+            for column in alert_type_select:
+                # if column in ['Date', 'Time', 'ds']:
+                #     continue
+                try:
+                    if target_report[column] > target_forecast[column+'_yhat_upper']:
+                        st.write(column + ': ' + str(target_report[column]) + ' (' +
+                                 str(round(target_forecast[column+'_yhat_upper'], 1)) + ')')
+                except:
+                    continue
+with subheaders:
+    st.subheader('Inflow')
+with col1:
+    st.metric(label="Total", value=current['Total Inflow cum'],
+              delta=int(current['Total Inflow hrly']))
+
+with col2:
+    st.metric(label="Stretcher", value=current['Stretcher Pts cum'],
+              delta=int(current['Stretcher Pts hrly']))
+
+with col3:
+    st.metric(label="Ambulatory", value=current['Ambulatory Pts cum'],
+              delta=int(current['Ambulatory Pts hrly']))
+
+with col4:
+    st.metric(label="Ambulances", value=current['Ambulances cum'],
+              delta=int(current['Ambulances hrly']))
+
+with subheaders:
+    st.subheader(' ')
+    st.subheader(' ')
+    st.subheader('Outflow')
+with col1:
+    st.metric(label="Admission Requests", value=current['Adm. requests cum'],
+              delta=int(current['Adm. requests cum']-df.iloc[1]['Adm. requests cum']))
+
+with col2:
+    st.metric(label="Admissions", value=current['Admissions cum'],
+              delta=int(current['Admissions cum']-df.iloc[1]['Admissions cum']))
+
+with col3:
+    st.metric(label="Waiting for Admission", value=current['Pts.waiting for admission CUM'],
+              delta=int(current['Pts.waiting for admission CUM']-df.iloc[1]['Pts.waiting for admission CUM']))
+with col4:
+    st.write(' ')
+    st.write(' ')
+    st.write(' ')
+    st.write(' ')
+    st.write(' ')
+    st.write(' ')
+    st.write(' ')
+
+with subheaders:
+    st.subheader(' ')
+    st.subheader(' ')
+    st.subheader('To Be Seen')
+with col1:
+    st.metric(label="Green", value=current['Green Pts TBS'],
+              delta=int(current['Green Pts TBS']-df.iloc[1]['Green Pts TBS']))
+
+with col2:
+    st.metric(label="Yellow", value=current['Yellow Pts TBS'],
+              delta=int(current['Yellow Pts TBS']-df.iloc[1]['Yellow Pts TBS']))
+
+with col3:
+    st.metric(label="Orange", value=current['Orange Pts TBS'],
+              delta=int(current['Orange Pts TBS']-df.iloc[1]['Orange Pts TBS']))
+with col4:
+    st.metric(label="Total Pods", value=current['Total Pod TBS'],
+              delta=int(current['Total Pod TBS']-df.iloc[1]['Total Pod TBS']))
+
+with col1:
+    st.metric(label="Vertical", value=current['Stretcher Pts TBS in Vertical']+current['Ambulatory Pts TBS in Vertical'],
+              delta=int((current['Stretcher Pts TBS in Vertical']+current['Ambulatory Pts TBS in Vertical'])-(df.iloc[1]['Stretcher Pts TBS in Vertical']+df.iloc[1]['Ambulatory Pts TBS in Vertical'])))
+
+with col2:
+    st.metric(label="QTrack", value=current['QTrack Patients TBS'],
+              delta=int(current['QTrack Patients TBS']-df.iloc[1]['QTrack Patients TBS']))
+
+with col3:
+    st.metric(label="Garage", value=current['GARAGE patient TBS'],
+              delta=int(current['GARAGE patient TBS']-df.iloc[1]['GARAGE patient TBS']))
+with col4:
+    st.metric(label="Total Ambulatory", value=current['Total Vertical TBS'],
+              delta=int(current['Total Vertical TBS']-df.iloc[1]['Total Vertical TBS']))
 
 # st.write(df.columns.tolist())
 
-filter_expander = st.expander('Filters')
-
-with filter_expander:
-    alert_type_select = st.multiselect('Filter by type', [
-        column for column in df.columns.tolist() if column not in ['Date', 'Time', 'ds']],
-        ['Total Inflow hrly', 'Ambulances hrly', 'Total Stretcher pts', 'Triage hallway pts',
-         'Triage hallway pts TBS', 'Resus Pts', 'Totalpts in PODs except Psych', 'Green Pts TBS',
-         'Yellow Pts TBS', 'Orange Pts TBS', 'Consults > 2h in PODS except IM', 'Consult for IM >4h in PODS',
-         'CTs reqs > 2 h in PODs', 'Post POD (Family room)', 'QTrack Patients TBS', 'GARAGE patient TBS',
-         'Consults > 2h in Vertical Except IM', 'Consult for IM >4h in Vertical', 'Plain films reqs > 2 hr in Vertical', 'CTs reqs > 2 hrs in Vertical',
-         'Total Pod TBS', 'Total Vertical TBS'])
-
-for column in alert_type_select:
-    if column in ['Date', 'Time', 'ds']:
-        continue
-    try:
-        if current[column] > current_forecast[column+'_yhat_upper']:
-            current_alerts.append(column + ': ' + str(current[column]) + ' (' +
-                                  str(round(current_forecast[column+'_yhat_upper'], 1)) + ')')
-    except:
-        continue
-
-if len(current_alerts) > 0:
-    for alert in current_alerts:
-        with alert_section:
-            st.write('**• '+alert+'**')
-else:
-    with alert_section:
-        st.write('**No active alerts**')
-
-recent_alerts = st.expander('History (last 4 hours)')
-with recent_alerts:
-    # st.subheader('Last 4 hours')
-    for lag in [1, 2, 3, 4]:
-        target_report = df.iloc[lag]
-        target_forecast = forecast.set_index('ds').loc[target_report.ds]
-        st.markdown('**'+str(target_report.ds)+'**')
-        for column in alert_type_select:
-            # if column in ['Date', 'Time', 'ds']:
-            #     continue
-            try:
-                if target_report[column] > target_forecast[column+'_yhat_upper']:
-                    st.write(column + ': ' + str(target_report[column]) + ' (' +
-                             str(round(target_forecast[column+'_yhat_upper'], 1)) + ')')
-            except:
-                continue
 
 today = df.iloc[0].ds.date()
 
-# st.write(today)
+todays_forecast = forecast[(forecast.ds <= (df.iloc[0].ds + datetime.timedelta(hours=24 -
+                                                                               df.iloc[0].ds.hour))) & (forecast.ds > (df.iloc[0].ds + datetime.timedelta(hours=-1 -
+                                                                                                                                                          df.iloc[0].ds.hour)))]
 
-# inflow_chart_select = st.multiselect('',
-#                                      ['Total Inflow hrly', 'Total Inflow cum', 'Stretcher Pts hrly', 'Ambulatory Pts hrly', 'Ambulances hrly'])
-# inflow_chart_hrly_cum = st.radio('', ['hrly', 'cum'])
 fig = make_subplots(specs=[[{"secondary_y": True}]])
-# for inflow_line in inflow_chart_select:
-# fig.add_trace(go.Scatter(x=df.ds, y=df[inflow_line], mode='lines',
-#                          name=inflow_line, showlegend=True))
+
 fig.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
                          ['Total Inflow hrly'], mode='markers', name='Hourly Inflow', showlegend=False, line=dict(color='red', width=4)), secondary_y=False)
-fig.add_trace(go.Scatter(x=forecast[forecast.ds.dt.date == today].ds, y=forecast[forecast.ds.dt.date == today]
+fig.add_trace(go.Scatter(x=todays_forecast.ds, y=todays_forecast
                          ['Total Inflow hrly_yhat_lower'], mode='lines', name='Hourly Inflow (expected)', showlegend=False, line=dict(color='red', width=1, dash='dot')), secondary_y=False)
-fig.add_trace(go.Scatter(x=forecast[forecast.ds.dt.date == today].ds, y=forecast[forecast.ds.dt.date == today]
+fig.add_trace(go.Scatter(x=todays_forecast.ds, y=todays_forecast
                          ['Total Inflow hrly_yhat'], mode='lines', name='Hourly Inflow (expected)', showlegend=False, line=dict(color='red', width=1, dash='dot')), secondary_y=False)
-fig.add_trace(go.Scatter(x=forecast[forecast.ds.dt.date == today].ds, y=forecast[forecast.ds.dt.date == today]
+fig.add_trace(go.Scatter(x=todays_forecast.ds, y=todays_forecast
                          ['Total Inflow hrly_yhat_upper'], mode='lines', name='Hourly Inflow (expected)', showlegend=False, line=dict(color='red', width=1, dash='dot')), secondary_y=False)
 
 fig.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
                          ['Total Inflow cum'], mode='lines', name='Total Inflow', showlegend=False, line=dict(color='blue', width=4)), secondary_y=True)
-# fig.add_trace(go.Scatter(x=forecast[forecast.ds.dt.date == today].ds, y=forecast[forecast.ds.dt.date == today]
-#                          ['Total Inflow cum_yhat'], mode='lines', name='Total Inflow (expected)', showlegend=True), secondary_y=True)
-# fig.add_trace(go.Scatter(x=df.index, y=df['Ambulatory Pts hrly'], mode='lines',
-#                          name='Stretcher Inflow', showlegend=True))
 
 
 total_inflow_forecast = forecast[(forecast.ds <= (df.iloc[0].ds + datetime.timedelta(hours=24 -
@@ -134,72 +211,3 @@ fig.update_yaxes(title_text="Total Inflow", secondary_y=True)
 st.plotly_chart(fig, use_container_width=True,
                 config={'staticPlot': True}
                 )
-
-st.subheader('Inflow')
-
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.metric(label="Total", value=current['Total Inflow cum'],
-              delta=int(current['Total Inflow hrly']))
-
-with col2:
-    st.metric(label="Stretcher", value=current['Stretcher Pts cum'],
-              delta=int(current['Stretcher Pts hrly']))
-
-with col3:
-    st.metric(label="Ambulatory", value=current['Ambulatory Pts cum'],
-              delta=int(current['Ambulatory Pts hrly']))
-
-with col4:
-    st.metric(label="Ambulances", value=current['Ambulances cum'],
-              delta=int(current['Ambulances hrly']))
-
-st.subheader('Outflow')
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.metric(label="Admission Requests", value=current['Adm. requests cum'],
-              delta=int(current['Adm. requests cum']-df.iloc[1]['Adm. requests cum']))
-
-with col2:
-    st.metric(label="Admissions", value=current['Admissions cum'],
-              delta=int(current['Admissions cum']-df.iloc[1]['Admissions cum']))
-
-with col3:
-    st.metric(label="Waiting for Admission", value=current['Pts.waiting for admission CUM'],
-              delta=int(current['Pts.waiting for admission CUM']-df.iloc[1]['Pts.waiting for admission CUM']))
-
-st.subheader('To Be Seen')
-
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.metric(label="Green", value=current['Green Pts TBS'],
-              delta=int(current['Green Pts TBS']-df.iloc[1]['Green Pts TBS']))
-
-with col2:
-    st.metric(label="Yellow", value=current['Yellow Pts TBS'],
-              delta=int(current['Yellow Pts TBS']-df.iloc[1]['Yellow Pts TBS']))
-
-with col3:
-    st.metric(label="Orange", value=current['Orange Pts TBS'],
-              delta=int(current['Orange Pts TBS']-df.iloc[1]['Orange Pts TBS']))
-with col4:
-    st.metric(label="Total Pods", value=current['Total Pod TBS'],
-              delta=int(current['Total Pod TBS']-df.iloc[1]['Total Pod TBS']))
-
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.metric(label="Vertical", value=current['Stretcher Pts TBS in Vertical']+current['Ambulatory Pts TBS in Vertical'],
-              delta=int((current['Stretcher Pts TBS in Vertical']+current['Ambulatory Pts TBS in Vertical'])-(df.iloc[1]['Stretcher Pts TBS in Vertical']+df.iloc[1]['Ambulatory Pts TBS in Vertical'])))
-
-with col2:
-    st.metric(label="QTrack", value=current['QTrack Patients TBS'],
-              delta=int(current['QTrack Patients TBS']-df.iloc[1]['QTrack Patients TBS']))
-
-with col3:
-    st.metric(label="Garage", value=current['GARAGE patient TBS'],
-              delta=int(current['GARAGE patient TBS']-df.iloc[1]['GARAGE patient TBS']))
-with col4:
-    st.metric(label="Total Ambulatory", value=current['Total Vertical TBS'],
-              delta=int(current['Total Vertical TBS']-df.iloc[1]['Total Vertical TBS']))
-
-# st.write(df.columns.tolist())
