@@ -28,13 +28,29 @@ current_ds = df.head(1).iloc[0].ds
 
 st.header('Alerts')
 
+alert_section = st.empty()
+
 # st.subheader('Current')
 
 current_forecast = forecast.set_index('ds').loc[current_ds]
 
 current_alerts = []
 
-for column in df.columns.tolist():
+# st.write(df.columns.tolist())
+
+filter_expander = st.expander('Filters')
+
+with filter_expander:
+    alert_type_select = st.multiselect('Filter by type', [
+        column for column in df.columns.tolist() if column not in ['Date', 'Time', 'ds']],
+        ['Total Inflow hrly', 'Ambulances hrly', 'Total Stretcher pts', 'Triage hallway pts',
+         'Triage hallway pts TBS', 'Resus Pts', 'Totalpts in PODs except Psych', 'Green Pts TBS',
+         'Yellow Pts TBS', 'Orange Pts TBS', 'Consults > 2h in PODS except IM', 'Consult for IM >4h in PODS',
+         'CTs reqs > 2 h in PODs', 'Post POD (Family room)', 'QTrack Patients TBS', 'GARAGE patient TBS',
+         'Consults > 2h in Vertical Except IM', 'Consult for IM >4h in Vertical', 'Plain films reqs > 2 hr in Vertical', 'CTs reqs > 2 hrs in Vertical',
+         'Total Pod TBS', 'Total Vertical TBS'])
+
+for column in alert_type_select:
     if column in ['Date', 'Time', 'ds']:
         continue
     try:
@@ -46,9 +62,11 @@ for column in df.columns.tolist():
 
 if len(current_alerts) > 0:
     for alert in current_alerts:
-        st.write(alert)
+        with alert_section:
+            st.write('**- '+alert+'**')
 else:
-    st.write('No active alerts')
+    with alert_section:
+        st.write('**No active alerts**')
 
 recent_alerts = st.expander('History (last 4 hours)')
 with recent_alerts:
@@ -57,9 +75,9 @@ with recent_alerts:
         target_report = df.iloc[lag]
         target_forecast = forecast.set_index('ds').loc[target_report.ds]
         st.markdown('**'+str(target_report.ds)+'**')
-        for column in df.columns.tolist():
-            if column in ['Date', 'Time', 'ds']:
-                continue
+        for column in alert_type_select:
+            # if column in ['Date', 'Time', 'ds']:
+            #     continue
             try:
                 if target_report[column] > target_forecast[column+'_yhat_upper']:
                     st.write(column + ': ' + str(target_report[column]) + ' (' +
@@ -91,7 +109,7 @@ with col4:
 
 today = df.iloc[0].ds.date()
 
-st.write(today)
+# st.write(today)
 
 # inflow_chart_select = st.multiselect('',
 #                                      ['Total Inflow hrly', 'Total Inflow cum', 'Stretcher Pts hrly', 'Ambulatory Pts hrly', 'Ambulances hrly'])
@@ -103,7 +121,11 @@ fig = make_subplots(specs=[[{"secondary_y": True}]])
 fig.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
                          ['Total Inflow hrly'], mode='markers', name='Hourly Inflow', showlegend=False, line=dict(color='red', width=4)), secondary_y=False)
 fig.add_trace(go.Scatter(x=forecast[forecast.ds.dt.date == today].ds, y=forecast[forecast.ds.dt.date == today]
+                         ['Total Inflow hrly_yhat_lower'], mode='lines', name='Hourly Inflow (expected)', showlegend=False, line=dict(color='red', width=1, dash='dot')), secondary_y=False)
+fig.add_trace(go.Scatter(x=forecast[forecast.ds.dt.date == today].ds, y=forecast[forecast.ds.dt.date == today]
                          ['Total Inflow hrly_yhat'], mode='lines', name='Hourly Inflow (expected)', showlegend=False, line=dict(color='red', width=1, dash='dot')), secondary_y=False)
+fig.add_trace(go.Scatter(x=forecast[forecast.ds.dt.date == today].ds, y=forecast[forecast.ds.dt.date == today]
+                         ['Total Inflow hrly_yhat_upper'], mode='lines', name='Hourly Inflow (expected)', showlegend=False, line=dict(color='red', width=1, dash='dot')), secondary_y=False)
 
 fig.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
                          ['Total Inflow cum'], mode='lines', name='Total Inflow', showlegend=False, line=dict(color='blue', width=4)), secondary_y=True)
