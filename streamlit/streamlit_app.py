@@ -3,6 +3,7 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import datetime
 
 
 st.title("Hourly Report")
@@ -26,7 +27,7 @@ current_ds = df.head(1).iloc[0].ds
 
 # st.write(df.head(1).set_index('ds').drop(['Date', 'Time'], axis=1))
 
-st.header('Alerts')
+st.subheader('Alerts')
 
 alert_section = st.empty()
 
@@ -63,7 +64,7 @@ for column in alert_type_select:
 if len(current_alerts) > 0:
     for alert in current_alerts:
         with alert_section:
-            st.write('**- '+alert+'**')
+            st.write('**• '+alert+'**')
 else:
     with alert_section:
         st.write('**No active alerts**')
@@ -84,28 +85,6 @@ with recent_alerts:
                              str(round(target_forecast[column+'_yhat_upper'], 1)) + ')')
             except:
                 continue
-
-st.header('Inflow')
-
-# st.subheader('Today')
-
-col1, col2, col3, col4 = st.columns(4)
-with col1:
-    st.metric(label="Total", value=current['Total Inflow cum'],
-              delta=int(current['Total Inflow hrly']))
-
-with col2:
-    st.metric(label="Stretcher", value=current['Stretcher Pts cum'],
-              delta=int(current['Stretcher Pts hrly']))
-
-with col3:
-    st.metric(label="Ambulatory", value=current['Ambulatory Pts cum'],
-              delta=int(current['Ambulatory Pts hrly']))
-
-with col4:
-    st.metric(label="Ambulances", value=current['Ambulances cum'],
-              delta=int(current['Ambulances hrly']))
-
 
 today = df.iloc[0].ds.date()
 
@@ -133,6 +112,22 @@ fig.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
 #                          ['Total Inflow cum_yhat'], mode='lines', name='Total Inflow (expected)', showlegend=True), secondary_y=True)
 # fig.add_trace(go.Scatter(x=df.index, y=df['Ambulatory Pts hrly'], mode='lines',
 #                          name='Stretcher Inflow', showlegend=True))
+
+
+total_inflow_forecast = forecast[(forecast.ds <= (df.iloc[0].ds + datetime.timedelta(hours=24 -
+                                                                                     df.iloc[0].ds.hour))) & (forecast.ds > df.iloc[0].ds)][['ds', 'Total Inflow hrly_yhat']]
+
+
+total_inflow_forecast['y'] = total_inflow_forecast['Total Inflow hrly_yhat'].astype(
+    int).expanding().sum().astype(int).add(df.iloc[0]['Total Inflow cum'])
+
+
+total_inflow_forecast = pd.concat([df.head(1)[['ds', 'Total Inflow cum']].rename(
+    {'Total Inflow cum': 'y'}, axis=1), total_inflow_forecast])
+
+fig.add_trace(go.Scatter(x=total_inflow_forecast.ds, y=total_inflow_forecast.y, mode='lines',
+                         name='Total Inflow (expected)', showlegend=False, line=dict(color='blue', width=1, dash='dot')), secondary_y=True)
+
 fig.update_yaxes(title_text="Hourly Inflow", secondary_y=False)
 fig.update_yaxes(title_text="Total Inflow", secondary_y=True)
 
@@ -140,7 +135,26 @@ st.plotly_chart(fig, use_container_width=True,
                 config={'staticPlot': True}
                 )
 
-st.header('Outflow')
+st.subheader('Inflow')
+
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    st.metric(label="Total", value=current['Total Inflow cum'],
+              delta=int(current['Total Inflow hrly']))
+
+with col2:
+    st.metric(label="Stretcher", value=current['Stretcher Pts cum'],
+              delta=int(current['Stretcher Pts hrly']))
+
+with col3:
+    st.metric(label="Ambulatory", value=current['Ambulatory Pts cum'],
+              delta=int(current['Ambulatory Pts hrly']))
+
+with col4:
+    st.metric(label="Ambulances", value=current['Ambulances cum'],
+              delta=int(current['Ambulances hrly']))
+
+st.subheader('Outflow')
 col1, col2, col3 = st.columns(3)
 with col1:
     st.metric(label="Admission Requests", value=current['Adm. requests cum'],
@@ -154,7 +168,7 @@ with col3:
     st.metric(label="Waiting for Admission", value=current['Pts.waiting for admission CUM'],
               delta=int(current['Pts.waiting for admission CUM']-df.iloc[1]['Pts.waiting for admission CUM']))
 
-st.header('To Be Seen')
+st.subheader('To Be Seen')
 
 col1, col2, col3, col4 = st.columns(4)
 with col1:
