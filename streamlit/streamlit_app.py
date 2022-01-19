@@ -22,7 +22,7 @@ current = df.iloc[0]
 
 current_ds = df.head(1).iloc[0].ds
 
-title_col, update_col = st.columns([4, 1])
+title_col, update_col = st.columns([3, 1])
 
 with title_col:
     st.title("Hourly Report")
