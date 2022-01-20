@@ -7,7 +7,6 @@ import datetime
 
 st.set_page_config(layout="wide")
 
-
 df = pd.read_csv(
     'https://raw.githubusercontent.com/drdevinhopkins/hourly-report/main/data/recent.csv')
 
@@ -22,10 +21,13 @@ current = df.iloc[0]
 
 current_ds = df.head(1).iloc[0].ds
 
-title_col, update_col = st.columns([3, 1])
+title_col, layout_col, spacer, update_col = st.columns([1, 1, 1, 1])
 
 with title_col:
     st.title("Hourly Report")
+
+with layout_col:
+    st.selectbox(' ', ['Desktop', 'Mobile'])
 
 with update_col:
     st.write(' ')
