@@ -21,7 +21,7 @@ current = df.iloc[0]
 
 current_ds = df.head(1).iloc[0].ds
 
-title_col, layout_col, spacer, update_col = st.columns([1, 1, 1, 1])
+title_col, spacer, layout_col, update_col = st.columns([2, 1, 1, 1])
 
 with title_col:
     st.title("Hourly Report")
@@ -89,7 +89,7 @@ with alerts_col:
                 #     continue
                 try:
                     if target_report[column] > target_forecast[column+'_yhat_upper']:
-                        st.write(column + ': ' + str(target_report[column]) + ' (' +
+                        st.write('• '+column + ': ' + str(target_report[column]) + ' (' +
                                  str(round(target_forecast[column+'_yhat_upper'], 1)) + ')')
                 except:
                     continue
@@ -140,34 +140,35 @@ with subheaders:
     st.subheader(' ')
     st.subheader('To Be Seen')
 with col1:
+    st.metric(label="Total Pods", value=current['Total Pod TBS'],
+              delta=int(current['Total Pod TBS']-df.iloc[1]['Total Pod TBS']))
+with col2:
     st.metric(label="Green", value=current['Green Pts TBS'],
               delta=int(current['Green Pts TBS']-df.iloc[1]['Green Pts TBS']))
 
-with col2:
+with col3:
     st.metric(label="Yellow", value=current['Yellow Pts TBS'],
               delta=int(current['Yellow Pts TBS']-df.iloc[1]['Yellow Pts TBS']))
 
-with col3:
+with col4:
     st.metric(label="Orange", value=current['Orange Pts TBS'],
               delta=int(current['Orange Pts TBS']-df.iloc[1]['Orange Pts TBS']))
-with col4:
-    st.metric(label="Total Pods", value=current['Total Pod TBS'],
-              delta=int(current['Total Pod TBS']-df.iloc[1]['Total Pod TBS']))
 
 with col1:
-    st.metric(label="Vertical", value=current['Stretcher Pts TBS in Vertical']+current['Ambulatory Pts TBS in Vertical'],
+    st.metric(label="Total Ambulatory", value=int(current['Total Vertical TBS']),
+              delta=int(current['Total Vertical TBS']-df.iloc[1]['Total Vertical TBS']))
+with col2:
+    st.metric(label="Vertical", value=int(current['Stretcher Pts TBS in Vertical']+current['Ambulatory Pts TBS in Vertical']),
               delta=int((current['Stretcher Pts TBS in Vertical']+current['Ambulatory Pts TBS in Vertical'])-(df.iloc[1]['Stretcher Pts TBS in Vertical']+df.iloc[1]['Ambulatory Pts TBS in Vertical'])))
 
-with col2:
-    st.metric(label="QTrack", value=current['QTrack Patients TBS'],
+with col3:
+    st.metric(label="QTrack", value=int(current['QTrack Patients TBS']),
               delta=int(current['QTrack Patients TBS']-df.iloc[1]['QTrack Patients TBS']))
 
-with col3:
-    st.metric(label="Garage", value=current['GARAGE patient TBS'],
-              delta=int(current['GARAGE patient TBS']-df.iloc[1]['GARAGE patient TBS']))
 with col4:
-    st.metric(label="Total Ambulatory", value=current['Total Vertical TBS'],
-              delta=int(current['Total Vertical TBS']-df.iloc[1]['Total Vertical TBS']))
+    st.metric(label="Garage", value=int(current['GARAGE patient TBS']),
+              delta=int(current['GARAGE patient TBS']-df.iloc[1]['GARAGE patient TBS']))
+
 
 # st.write(df.columns.tolist())
 
@@ -210,6 +211,82 @@ fig.add_trace(go.Scatter(x=total_inflow_forecast.ds, y=total_inflow_forecast.y, 
 fig.update_yaxes(title_text="Hourly Inflow", secondary_y=False)
 fig.update_yaxes(title_text="Total Inflow", secondary_y=True)
 
-st.plotly_chart(fig, use_container_width=True,
-                config={'staticPlot': True}
-                )
+chart_col1, chart_col2, chart_col3 = st.columns(3)
+with chart_col1:
+    st.plotly_chart(fig, use_container_width=True,
+                    config={'staticPlot': True}
+                    )
+
+fig2 = make_subplots(specs=[[{"secondary_y": True}]])
+
+fig2.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
+                          ['Total Stretcher pts'], mode='markers', name='Hourly Inflow', showlegend=False, line=dict(color='red', width=4)), secondary_y=False)
+fig2.add_trace(go.Scatter(x=todays_forecast.ds, y=todays_forecast
+                          ['Total Stretcher pts_yhat_lower'], mode='lines', name='Hourly Inflow (expected)', showlegend=False, line=dict(color='red', width=1, dash='dot')), secondary_y=False)
+fig2.add_trace(go.Scatter(x=todays_forecast.ds, y=todays_forecast
+                          ['Total Stretcher pts_yhat'], mode='lines', name='Hourly Inflow (expected)', showlegend=False, line=dict(color='red', width=1, dash='dot')), secondary_y=False)
+fig2.add_trace(go.Scatter(x=todays_forecast.ds, y=todays_forecast
+                          ['Total Stretcher pts_yhat_upper'], mode='lines', name='Hourly Inflow (expected)', showlegend=False, line=dict(color='red', width=1, dash='dot')), secondary_y=False)
+
+# fig2.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
+#                          ['Total Inflow cum'], mode='lines', name='Total Inflow', showlegend=False, line=dict(color='blue', width=4)), secondary_y=True)
+
+
+total_stretcher_forecast = forecast[(forecast.ds <= (df.iloc[0].ds + datetime.timedelta(hours=24 - df.iloc[0].ds.hour))) & (
+    forecast.ds > df.iloc[0].ds)][['ds', 'Total Stretcher pts_yhat']].rename({'Total Stretcher pts_yhat': 'y'}, axis=1)
+
+# total_stretcher_forecast['y'] = total_stretcher_forecast['Total Stretcher pts_yhat'].astype(
+#     int).expanding().sum().astype(int).add(df.iloc[0]['Total Inflow cum'])
+
+
+# total_stretcher_forecast = pd.concat([df.head(1)[['ds', 'Total Inflow cum']].rename(
+#     {'Total Inflow cum': 'y'}, axis=1), total_stretcher_forecast])
+
+# fig2.add_trace(go.Scatter(x=total_stretcher_forecast.ds, y=total_stretcher_forecast.y, mode='markers',
+#                           name='Total Inflow (expected)', showlegend=False, line=dict(color='blue', width=1, dash='dot')), secondary_y=True)
+
+fig2.update_yaxes(title_text="Total Stretcher Pts", secondary_y=False)
+# fig2.update_yaxes(title_text="Total Inflow", secondary_y=True)
+
+with chart_col2:
+    st.plotly_chart(fig2, use_container_width=True,
+                    config={'staticPlot': True}
+                    )
+
+# st.write(forecast.columns.tolist())
+
+fig3 = make_subplots(specs=[[{"secondary_y": True}]])
+
+fig3.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
+                          ['Total Vertical TBS'], mode='markers', name='Total Vertical TBS', showlegend=False, line=dict(color='red', width=4)), secondary_y=False)
+fig3.add_trace(go.Scatter(x=todays_forecast.ds, y=todays_forecast
+                          ['Total Vertical TBS_yhat_lower'], mode='lines', name='Total Vertical TBS (expected)', showlegend=False, line=dict(color='red', width=1, dash='dot')), secondary_y=False)
+fig3.add_trace(go.Scatter(x=todays_forecast.ds, y=todays_forecast
+                          ['Total Vertical TBS_yhat'], mode='lines', name='Total Vertical TBS (expected)', showlegend=False, line=dict(color='red', width=1, dash='dot')), secondary_y=False)
+fig3.add_trace(go.Scatter(x=todays_forecast.ds, y=todays_forecast
+                          ['Total Vertical TBS_yhat_upper'], mode='lines', name='Total Vertical TBS (expected)', showlegend=False, line=dict(color='red', width=1, dash='dot')), secondary_y=False)
+
+# fig2.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
+#                          ['Total Inflow cum'], mode='lines', name='Total Inflow', showlegend=False, line=dict(color='blue', width=4)), secondary_y=True)
+
+
+total_stretcher_forecast = forecast[(forecast.ds <= (df.iloc[0].ds + datetime.timedelta(hours=24 - df.iloc[0].ds.hour))) & (
+    forecast.ds > df.iloc[0].ds)][['ds', 'Total Vertical TBS_yhat']].rename({'Total Vertical TBS_yhat': 'y'}, axis=1)
+
+# total_stretcher_forecast['y'] = total_stretcher_forecast['Total Stretcher pts_yhat'].astype(
+#     int).expanding().sum().astype(int).add(df.iloc[0]['Total Inflow cum'])
+
+
+# total_stretcher_forecast = pd.concat([df.head(1)[['ds', 'Total Inflow cum']].rename(
+#     {'Total Inflow cum': 'y'}, axis=1), total_stretcher_forecast])
+
+# fig3.add_trace(go.Scatter(x=total_stretcher_forecast.ds, y=total_stretcher_forecast.y, mode='markers',
+#   name='Total Vertical TBS (expected)', showlegend=False, line=dict(color='blue', width=1, dash='dot')), secondary_y=True)
+
+fig3.update_yaxes(title_text="Total Vertical TBS", secondary_y=False)
+# fig2.update_yaxes(title_text="Total Inflow", secondary_y=True)
+
+with chart_col3:
+    st.plotly_chart(fig3, use_container_width=True,
+                    config={'staticPlot': True}
+                    )
