@@ -21,10 +21,12 @@ current = df.iloc[0]
 
 current_ds = df.head(1).iloc[0].ds
 
+st.title('Hourly Report')
+mobile = st.checkbox('Mobile version')
 
 # SIDEBAR
 st.sidebar.write('Last Update ' + str(df.iloc[0].ds))
-display = st.sidebar.selectbox('Display Type', ['Desktop', 'Mobile'])
+# display = st.sidebar.selectbox('Display Type', ['Desktop', 'Mobile'])
 filter_expander = st.sidebar.expander('Alert Filters')
 
 with filter_expander:
@@ -39,8 +41,7 @@ with filter_expander:
 
 # DESKTOP
 
-if display == 'Desktop':
-    st.title('Hourly Report')
+if not mobile:
 
     alerts_col, spacer, subheaders, col1, col2, col3, col4 = st.columns([
                                                                         3, 1, 2, 2, 2, 2, 2])
@@ -248,8 +249,7 @@ if display == 'Desktop':
 
 
 # MOBILE
-if display == 'Mobile':
-    st.title('Hourly Report')
+if mobile:
 
     st.subheader('Alerts')
 
