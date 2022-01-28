@@ -32,12 +32,28 @@ filter_expander = st.sidebar.expander('Alert Filters')
 with filter_expander:
     alert_type_select = st.multiselect('Filter by type', [
         column for column in df.columns.tolist() if column not in ['Date', 'Time', 'ds']],
-        ['Total Inflow hrly', 'Ambulances hrly', 'Total Stretcher pts', 'Triage hallway pts',
-            'Triage hallway pts TBS', 'Resus Pts', 'Totalpts in PODs except Psych', 'Green Pts TBS',
-            'Yellow Pts TBS', 'Orange Pts TBS', 'Consults > 2h in PODS except IM', 'Consult for IM >4h in PODS',
-            'CTs reqs > 2 h in PODs', 'Post POD (Family room)', 'QTrack Patients TBS', 'GARAGE patient TBS',
-            'Consults > 2h in Vertical Except IM', 'Consult for IM >4h in Vertical', 'Plain films reqs > 2 hr in Vertical', 'CTs reqs > 2 hrs in Vertical',
-            'Total Pod TBS', 'Total Vertical TBS'])
+        ['Total Inflow hrly',
+         'Ambulances hrly',
+         'Total Stretcher pts',
+         'Triage hallway pts',
+            'Triage hallway pts TBS',
+            'Resus Pts',
+            'Totalpts in PODs except Psych',
+            'Green Pts TBS',
+            'Yellow Pts TBS',
+            'Orange Pts TBS',
+            # 'Consults > 2h in PODS except IM',
+            # 'Consult for IM >4h in PODS',
+            # 'CTs reqs > 2 h in PODs',
+            'Post POD (Family room)',
+            'QTrack Patients TBS',
+            'GARAGE patient TBS',
+            # 'Consults > 2h in Vertical Except IM',
+            # 'Consult for IM >4h in Vertical',
+            # 'Plain films reqs > 2 hr in Vertical',
+            # 'CTs reqs > 2 hrs in Vertical',
+            'Total Pod TBS',
+            'Total Vertical TBS'])
 
 # DESKTOP
 
