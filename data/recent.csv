@@ -1,7 +1,8 @@
 Date,Time,Stretcher Pts hrly,Stretcher Pts cum,Ambulatory Pts hrly,Ambulatory Pts cum,Total Inflow hrly,Total Inflow cum,Ambulances hrly,Ambulances cum,FLS hrly,Adm. requests cum,Admissions cum,Pts.waiting for admission CUM,Total Stretcher pts,Triage hallway pts,Triage hallway pts TBS,Re-Oriented Nurse cum,Re-Oriented MD QTrack D/C,Re-Oriented MD QTrack NotD/C,Resus Pts,Totalpts in PODs except Psych,Green Pts,Green Pts TBS,Yellow PTS,Yellow Pts TBS,Orancge Pts except psych,Orange Pts TBS,Consults > 2h in PODS except IM,Consult for IM >4h in PODS,Plain films reqs > 2 h in PODs,CTs reqs > 2 h in PODs,Post POD (Family room),Stretcher Pts in Vertical,Stretcher Pts TBS in Vertical,Stretcher Pts in Vertical on Lazyboy,Vertical Pts Waiting for Results,Ambulatory Pts in Vertical,Ambulatory Pts TBS in Vertical,QTrack Patients TBS,GARAGE patient TBS,Consults > 2h in Vertical Except IM,Consult for IM >4h in Vertical,Plain films reqs > 2 hr in Vertical,CTs reqs > 2 hrs in Vertical,Psych Stretcher Pts1pt,Psych pts waiting for admission,ds,Total Pod TBS,Total Vertical TBS
-02/04/22,11,8,47,8,14,16,61,0,6,0,15,9,37,91,0,0,0,1,0,4,47,19,0,13,1,15,1,14,3,1,2,0,23,3,8,6,7,7,0.0,3.0,1,1,2,0,17,14,2022-02-04 11:00:00,2,13.0
-02/04/22,10,11,39,1,6,12,45,1,6,0,15,8,39,90,0,0,0,1,0,4,48,20,2,13,0,15,0,13,3,0,2,0,21,2,9,5,2,2,0.0,2.0,2,1,2,0,17,15,2022-02-04 10:00:00,2,6.0
-02/04/22,9,7,28,0,5,7,33,0,5,0,10,8,34,81,1,0,0,1,0,3,47,19,1,13,0,15,0,14,5,0,0,0,13,2,6,3,7,6,0.0,1.0,2,1,2,0,17,15,2022-02-04 09:00:00,1,9.0
+02/04/22,12,11,59,3,16,14,75,2,8,0,17,9,36,93,1,1,0,2,0,5,46,19,0,14,0,13,1,11,3,0,7,0,26,3,11,7,6,6,0.0,1.0,4,1,2,2,15,12,2022-02-04 12:00:00,1,10.0
+02/04/22,11,11,48,5,13,16,61,0,6,0,15,9,37,91,0,0,0,1,0,4,47,19,0,13,1,15,1,14,3,1,2,0,23,3,8,6,7,7,0.0,3.0,1,1,2,0,17,14,2022-02-04 11:00:00,2,13.0
+02/04/22,10,10,37,2,8,12,45,1,6,0,15,8,39,90,0,0,0,1,0,4,48,20,2,13,0,15,0,13,3,0,2,0,21,2,9,5,2,2,0.0,2.0,2,1,2,0,17,15,2022-02-04 10:00:00,2,6.0
+02/04/22,9,6,27,1,6,7,33,0,5,0,10,8,34,81,1,0,0,1,0,3,47,19,1,13,0,15,0,14,5,0,0,0,13,2,6,3,7,6,0.0,1.0,2,1,2,0,17,15,2022-02-04 09:00:00,1,9.0
 02/04/22,8,6,21,0,5,6,26,0,5,0,10,6,36,82,3,1,0,1,0,4,47,18,0,14,2,15,0,13,4,0,0,0,11,4,6,2,6,5,0.0,1.0,3,1,2,0,17,15,2022-02-04 08:00:00,2,10.0
 02/04/22,7,2,15,1,5,3,20,0,5,0,10,6,36,75,0,0,0,1,0,4,46,18,0,13,1,15,0,12,4,0,0,0,8,0,6,4,7,5,0.0,1.0,3,0,2,0,17,15,2022-02-04 07:00:00,1,6.0
 02/04/22,6,2,13,0,4,2,17,0,5,0,10,6,36,75,0,0,0,1,0,4,46,18,1,13,0,15,1,13,4,0,0,0,8,0,6,4,7,5,0.0,0.0,2,0,2,0,17,15,2022-02-04 06:00:00,2,5.0
@@ -334,4 +335,3 @@ Date,Time,Stretcher Pts hrly,Stretcher Pts cum,Ambulatory Pts hrly,Ambulatory Pt
 01/21/22,14,7,57,6,47,13,104,2,22,0,19,14,12,66,2,1,11,6,0,2,50,18,3,17,3,15,0,11,0,1,0,0,7,0,4,5,4,1,0.0,5.0,3,0,0,1,5,2,2022-01-21 14:00:00,6,6.0
 01/21/22,13,10,50,5,41,15,91,2,20,1,18,13,12,68,3,2,10,5,0,3,47,15,2,16,3,16,0,11,0,0,0,0,10,2,4,4,5,0,0.0,2.0,3,0,0,0,5,2,2022-01-21 13:00:00,5,4.0
 01/21/22,12,9,41,6,35,15,76,3,18,1,18,13,12,58,0,0,10,2,0,4,44,14,1,15,3,15,4,14,0,0,0,0,5,0,3,5,8,3,0.0,2.0,4,0,0,0,5,2,2022-01-21 12:00:00,8,5.0
-01/21/22,11,10,32,6,29,16,61,4,15,1,13,8,13,50,0,0,9,1,0,4,37,13,0,12,0,12,1,19,0,0,0,0,3,0,2,1,7,0,0.0,2.0,5,0,0,0,6,2,2022-01-21 11:00:00,1,2.0
