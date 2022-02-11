@@ -83,14 +83,14 @@ if not mobile:
                 continue
 
         if len(current_alerts) > 0:
+            # st.write(current_alerts)
             for alert in current_alerts:
-                with alert_section:
-                    st.write('**• '+alert+'**')
+                st.write('**• '+alert + '**')
         else:
             with alert_section:
                 st.write('**No active alerts**')
 
-        recent_alerts = st.expander('History (last 4 hours)', expanded=True)
+        recent_alerts = st.expander('History (last 4 hours)', expanded=False)
         with recent_alerts:
             for lag in [1, 2, 3, 4]:
                 target_report = df.iloc[lag]
@@ -179,6 +179,22 @@ if not mobile:
     with col4:
         st.metric(label="Garage", value=int(current['GARAGE patient TBS']),
                   delta=int(current['GARAGE patient TBS']-df.iloc[1]['GARAGE patient TBS']))
+
+    with subheaders:
+        st.subheader(' ')
+        st.subheader(' ')
+        st.subheader(' ')
+        st.subheader(' ')
+        st.subheader(' ')
+        st.subheader(' ')
+        st.subheader('Prepod')
+
+    with col1:
+        st.metric(label="Total", value=int(current['Triage hallway pts']),
+                  delta=int(current['Triage hallway pts']-df.iloc[1]['Triage hallway pts']))
+    with col2:
+        st.metric(label="TBS", value=int(current['Triage hallway pts TBS']),
+                  delta=int((current['Triage hallway pts TBS'])-(df.iloc[1]['Triage hallway pts TBS'])))
 
     today = df.iloc[0].ds.date()
 
