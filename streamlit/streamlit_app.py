@@ -286,8 +286,8 @@ if not mobile:
 
     with chart_col1:
         time_filter = st.selectbox(
-            'Time Filter', ['Week', 'Month', 'Year', 'All-Time'], 1)
-        time_filter_dict = {"Week": 8, "Month": 32,
+            'Time Filter', ['Week', 'Month', '3-Month', 'Year', 'All-Time'], 1)
+        time_filter_dict = {"Week": 8, "Month": 32, "3-Month": 94,
                             "Year": 366, 'All-Time': len(daily_visits_df)}
         filtered_daily_visits_df = daily_visits_df[daily_visits_df.ds > (
             pd.to_datetime('today')-datetime.timedelta(days=time_filter_dict[time_filter]))]

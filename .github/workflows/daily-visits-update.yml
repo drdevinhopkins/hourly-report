@@ -4,9 +4,13 @@
 name: Update daily visits
 
 on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron: "15 0 * * *"
+    - cron: "15 1 * * *"
 
 jobs:
   build:
@@ -26,4 +30,7 @@ jobs:
       - name: Update data
         run: |
           python scripts/daily-visits-update.py
+      - name: Update forecast
+        run: |
+          python scripts/daily-visits-forecast.py
       - uses: stefanzweifel/git-auto-commit-action@v4
