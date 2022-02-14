@@ -21,6 +21,11 @@ current = df.iloc[0]
 
 current_ds = df.head(1).iloc[0].ds
 
+daily_visits_df = pd.read_csv(
+    'https://raw.githubusercontent.com/drdevinhopkins/hourly-report/main/data/daily-visits.csv')
+
+daily_visits_df.ds = pd.to_datetime(daily_visits_df.ds)
+
 st.title('Hourly Report')
 mobile = st.checkbox('Mobile version')
 
@@ -276,6 +281,21 @@ if not mobile:
 
     with chart_col3:
         st.plotly_chart(fig3, use_container_width=True,
+                        config={'staticPlot': True}
+                        )
+
+    with chart_col1:
+        time_filter = st.selectbox('Time Filter', [7, 31, 365, 365*5], 1)
+        filtered_daily_visits_df = daily_visits_df[daily_visits_df.ds > (
+            pd.to_datetime('today')-datetime.timedelta(days=time_filter))]
+
+        fig4 = make_subplots()
+
+        fig4.add_trace(go.Scatter(x=filtered_daily_visits_df.ds, y=filtered_daily_visits_df .y,
+                                  mode='markers', name='Daily Visits', showlegend=False, line=dict(color='red', width=4)))
+
+        fig4.update_yaxes(title_text="Daily Visits", secondary_y=False)
+        st.plotly_chart(fig4, use_container_width=True,
                         config={'staticPlot': True}
                         )
 
