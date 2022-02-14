@@ -26,6 +26,11 @@ daily_visits_df = pd.read_csv(
 
 daily_visits_df.ds = pd.to_datetime(daily_visits_df.ds)
 
+daily_visits_forecast = pd.read_csv(
+    'https://raw.githubusercontent.com/drdevinhopkins/hourly-report/main/data/daily-visits-forecast.csv')
+
+daily_visits_forecast.ds = pd.to_datetime(daily_visits_forecast.ds)
+
 st.title('Hourly Report')
 mobile = st.checkbox('Mobile version')
 
