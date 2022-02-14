@@ -30,4 +30,7 @@ jobs:
       - name: Update data
         run: |
           python scripts/hourly-data-update.py
+      - name: Update daily visits
+        run: |
+          python scripts/daily-visits-update.py
       - uses: stefanzweifel/git-auto-commit-action@v4
