@@ -285,9 +285,12 @@ if not mobile:
                         )
 
     with chart_col1:
-        time_filter = st.selectbox('Time Filter', [7, 31, 365, 365*5], 1)
+        time_filter = st.selectbox(
+            'Time Filter', ['Week', 'Month', 'Year', 'All-Time'], 1)
+        time_filter_dict = {"Week": 8, "Month": 32,
+                            "Year": 366, 'All-Time': len(daily_visits_df)}
         filtered_daily_visits_df = daily_visits_df[daily_visits_df.ds > (
-            pd.to_datetime('today')-datetime.timedelta(days=time_filter))]
+            pd.to_datetime('today')-datetime.timedelta(days=time_filter_dict[time_filter]))]
 
         fig4 = make_subplots()
 
@@ -470,5 +473,22 @@ if mobile:
     fig3.update_yaxes(title_text="Total Vertical TBS", secondary_y=False)
 
     st.plotly_chart(fig3, use_container_width=True,
+                    config={'staticPlot': True}
+                    )
+
+    time_filter = st.selectbox(
+        'Time Filter', ['Week', 'Month', 'Year', 'All-Time'], 1)
+    time_filter_dict = {"Week": 8, "Month": 32,
+                        "Year": 366, 'All-Time': len(daily_visits_df)}
+    filtered_daily_visits_df = daily_visits_df[daily_visits_df.ds > (
+        pd.to_datetime('today')-datetime.timedelta(days=time_filter_dict[time_filter]))]
+
+    fig4 = make_subplots()
+
+    fig4.add_trace(go.Scatter(x=filtered_daily_visits_df.ds, y=filtered_daily_visits_df .y,
+                              mode='markers', name='Daily Visits', showlegend=False, line=dict(color='red', width=4)))
+
+    fig4.update_yaxes(title_text="Daily Visits", secondary_y=False)
+    st.plotly_chart(fig4, use_container_width=True,
                     config={'staticPlot': True}
                     )
