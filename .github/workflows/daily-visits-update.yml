@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: '3.9'
           cache: 'pip'
-      - run: pip install -r update-requirements.txt
+      - run: pip install -r forecast-requirements.txt
       - name: Setup timezone
         uses: zcong1993/setup-timezone@master
         with:
