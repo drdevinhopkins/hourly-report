@@ -3,10 +3,15 @@
 
 name: Make forecast
 
-on:
-  schedule:
+# on:
+  # schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron: "40 * * * *"
+    # - cron: "40 * * * *"
+on:
+  workflow_run:
+    workflows: ["Update data with current hourly report"]
+    types:
+      - completed
 
 jobs:
   build:
