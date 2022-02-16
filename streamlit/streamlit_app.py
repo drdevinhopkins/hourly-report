@@ -296,11 +296,16 @@ if not mobile:
                             "Year": 366, 'All-Time': len(daily_visits_df)}
         filtered_daily_visits_df = daily_visits_df[daily_visits_df.ds > (
             pd.to_datetime('today')-datetime.timedelta(days=time_filter_dict[time_filter]))]
+        filtered_daily_visits_forecast = daily_visits_forecast[daily_visits_forecast.ds > (
+            pd.to_datetime('today')-datetime.timedelta(days=time_filter_dict[time_filter]))]
 
         fig4 = make_subplots()
 
-        fig4.add_trace(go.Scatter(x=filtered_daily_visits_df.ds, y=filtered_daily_visits_df .y,
+        fig4.add_trace(go.Scatter(x=filtered_daily_visits_df.ds, y=filtered_daily_visits_df.y,
                                   mode='markers', name='Daily Visits', showlegend=False, line=dict(color='red', width=4)))
+
+        fig4.add_trace(go.Scatter(x=filtered_daily_visits_forecast.ds, y=filtered_daily_visits_forecast.yhat,
+                                  mode='lines', name='Daily Visits', showlegend=False, line=dict(color='blue', width=1)))
 
         fig4.update_yaxes(title_text="Daily Visits", secondary_y=False)
         st.plotly_chart(fig4, use_container_width=True,
