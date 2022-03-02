@@ -166,5 +166,6 @@ since2020_df = since2020_df.drop_duplicates(
     subset='ds', keep="last").sort_values(by=['ds'], ascending=False)
 
 since2020_df.to_csv("data/since-2020.csv", index=False)
+since2020_df.to_excel("data/since-2020.xlsx", index=False)
 since2020_df.head(14*24).to_csv("data/recent.csv", index=False)
 since2020_df.head(1).to_csv('data/current.csv', index=False)
