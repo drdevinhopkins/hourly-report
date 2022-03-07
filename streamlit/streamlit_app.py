@@ -212,7 +212,8 @@ if not mobile:
                                                                                    df.iloc[0].ds.hour))) & (forecast.ds > (df.iloc[0].ds + datetime.timedelta(hours=-1 -
                                                                                                                                                               df.iloc[0].ds.hour)))]
 
-    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    fig = make_subplots(
+        specs=[[{"secondary_y": True}]], subplot_titles=['Inflow'])
 
     fig.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
                              ['Total Inflow hrly'], mode='markers', name='Hourly Inflow', showlegend=False, line=dict(color='red', width=4)), secondary_y=False)
@@ -238,8 +239,11 @@ if not mobile:
     fig.add_trace(go.Scatter(x=total_inflow_forecast.ds, y=total_inflow_forecast.y, mode='lines',
                              name='Total Inflow (expected)', showlegend=False, line=dict(color='blue', width=1, dash='dot')), secondary_y=True)
 
-    fig.update_yaxes(title_text="Hourly Inflow", secondary_y=False)
-    fig.update_yaxes(title_text="Total Inflow", secondary_y=True)
+    fig.update_yaxes(title_text="Hourly",
+                     secondary_y=False, range=[0, max(df[df.Date == current.Date]['Total Inflow hrly'].max(), todays_forecast
+                                                      ['Total Inflow hrly_yhat_upper'].max())+2])
+    fig.update_yaxes(title_text="Total",
+                     secondary_y=True, range=[0, 300])
 
     chart_col1, chart_col2, chart_col3 = st.columns(3)
     with chart_col1:
@@ -247,7 +251,8 @@ if not mobile:
                         config={'staticPlot': True}
                         )
 
-    fig2 = make_subplots(specs=[[{"secondary_y": True}]])
+    fig2 = make_subplots(specs=[[{"secondary_y": True}]], subplot_titles=[
+                         'Stretcher Occupancy'])
 
     fig2.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
                               ['Total Stretcher pts'], mode='markers', name='Hourly Inflow', showlegend=False, line=dict(color='red', width=4)), secondary_y=False)
@@ -268,7 +273,8 @@ if not mobile:
                         config={'staticPlot': True}
                         )
 
-    fig3 = make_subplots(specs=[[{"secondary_y": True}]])
+    fig3 = make_subplots(
+        specs=[[{"secondary_y": True}]], subplot_titles=['Vertical TBS'])
 
     fig3.add_trace(go.Scatter(x=df.ds, y=df[df.Date == current.Date]
                               ['Total Vertical TBS'], mode='markers', name='Total Vertical TBS', showlegend=False, line=dict(color='red', width=4)), secondary_y=False)
@@ -282,7 +288,8 @@ if not mobile:
     total_stretcher_forecast = forecast[(forecast.ds <= (df.iloc[0].ds + datetime.timedelta(hours=24 - df.iloc[0].ds.hour))) & (
         forecast.ds > df.iloc[0].ds)][['ds', 'Total Vertical TBS_yhat']].rename({'Total Vertical TBS_yhat': 'y'}, axis=1)
 
-    fig3.update_yaxes(title_text="Total Vertical TBS", secondary_y=False)
+    fig3.update_yaxes(title_text="Total", secondary_y=False, range=[0, max(
+        df[df.Date == current.Date]['Total Vertical TBS'].max(), todays_forecast['Total Vertical TBS_yhat_upper'].max())+1])
 
     with chart_col3:
         st.plotly_chart(fig3, use_container_width=True,
