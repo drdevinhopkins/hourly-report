@@ -13,6 +13,11 @@ on:
   # schedule:
     # * is a special character in YAML so you have to quote this string
     # - cron: "15 0 * * *"
+on:
+  workflow_run:
+    workflows: ["Make forecast"]
+    types:
+      - completed
 
 jobs:
   build:
