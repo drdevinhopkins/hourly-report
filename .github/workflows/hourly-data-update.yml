@@ -5,7 +5,7 @@ name: Update data with current hourly report
 
 on:
   repository_dispatch:
-    types: [hourly_data_updated]
+    types: [hourly_data_updated, manually_trigger_data_update]
   # push:
   #   branches: [main]
   # pull_request:
