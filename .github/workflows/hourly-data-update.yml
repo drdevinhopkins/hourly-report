@@ -6,8 +6,8 @@ name: Update data with current hourly report
 on:
   repository_dispatch:
     types: [hourly_data_updated, manually_trigger_data_update]
-#   push:
-#     branches: [main]
+  push:
+    branches: [main]
   # pull_request:
   #   branches: [main]
   # schedule:
@@ -39,7 +39,7 @@ jobs:
         with:
           owner: drdevinhopkins
           repo: hourly-report-neuralprophet
-          github_token: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
+          github_token: ${{ secrets.G_ACCESS_TOKEN }}
           workflow_file_name: make_forecasts.yml
           wait_workflow: false
       - uses: stefanzweifel/git-auto-commit-action@v4
