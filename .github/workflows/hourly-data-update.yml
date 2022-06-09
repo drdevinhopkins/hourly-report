@@ -6,8 +6,8 @@ name: Update data with current hourly report
 on:
   repository_dispatch:
     types: [hourly_data_updated, manually_trigger_data_update]
-  push:
-    branches: [main]
+#   push:
+#     branches: [main]
   # pull_request:
   #   branches: [main]
   # schedule:
@@ -35,14 +35,4 @@ jobs:
       - name: Update daily visits
         run: |
           python scripts/daily-visits-update.py
-      - name: Trigger new neuralprophet forecasts
-        uses: actions/github-script@v5
-        with:
-          script: |
-            await github.rest.actions.createWorkflowDispatch({
-              'drdevinhopkins',
-              'hourly-report-neuralprophet',
-              'workflows/make-forecasts.yaml',
-              'main'
-            });
       - uses: stefanzweifel/git-auto-commit-action@v4
