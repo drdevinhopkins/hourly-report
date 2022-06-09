@@ -35,4 +35,11 @@ jobs:
       - name: Update daily visits
         run: |
           python scripts/daily-visits-update.py
+      - uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: drdevinhopkins
+          repo: hourly-report-neuralprophet
+          github_token: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
+          workflow_file_name: make_forecasts.yml
+          wait_workflow: false
       - uses: stefanzweifel/git-auto-commit-action@v4
