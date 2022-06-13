@@ -4,7 +4,7 @@ old_weather = pd.read_csv('data/weatherArchiveAndForecast.csv')
 old_weather.ds = pd.to_datetime(old_weather.ds)
 
 forecast = pd.read_csv(
-    'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/montreal/next24hours?unitGroup=metric&include=hours&key=NDD4FLZ37NRPKGD82DRZWXGHU&contentType=csv')
+    'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/montreal/next24hours?unitGroup=metric&include=hours&key=RGEY54DWN2UNQWC86N2UVF4CU&contentType=csv')
 forecast = forecast.rename(columns={'datetime': 'ds'})
 forecast.ds = pd.to_datetime(forecast.ds)
 
