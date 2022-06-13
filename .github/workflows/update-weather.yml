@@ -6,10 +6,10 @@ name: Update weather
 on:
   # push:
   #   branches: [main]
-  workflow_run:
-    workflows: ["Update data with current hourly report"]
-    types:
-      - completed
+#   workflow_run:
+#     workflows: ["Update data with current hourly report"]
+#     types:
+#       - completed
 
 jobs:
   build:
