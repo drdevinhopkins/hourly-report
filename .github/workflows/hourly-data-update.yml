@@ -32,9 +32,6 @@ jobs:
       - name: Update data
         run: |
           python scripts/hourly-data-update.py
-      - name: Update weather
-        run: |
-          python scripts/updateWeather.py
       - name: Update daily visits
         run: |
           python scripts/daily-visits-update.py
