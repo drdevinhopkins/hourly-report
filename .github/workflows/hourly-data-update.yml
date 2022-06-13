@@ -6,8 +6,8 @@ name: Update data with current hourly report
 on:
   repository_dispatch:
     types: [hourly_data_updated, manually_trigger_data_update]
-  push:
-    branches: [main]
+  # push:
+  #   branches: [main]
   # pull_request:
   #   branches: [main]
   # schedule:
@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
           cache: 'pip'
@@ -38,6 +38,7 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           push_options: '--force'
+          skip_fetch: false
       - uses: convictional/trigger-workflow-and-wait@v1.6.1
         with:
           owner: drdevinhopkins

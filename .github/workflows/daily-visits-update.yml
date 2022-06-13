@@ -4,8 +4,8 @@
 name: Update daily visits
 
 on:
-  repository_dispatch:
-    types: [update-daily-visit-forecast]
+  # repository_dispatch:
+  #   types: [update-daily-visit-forecast]
   # push:
   #   branches: [main]
   # pull_request:
@@ -14,18 +14,18 @@ on:
     # * is a special character in YAML so you have to quote this string
     # - cron: "15 0 * * *"
 # on:
-  workflow_run:
-    workflows: ["Make forecast"]
-    types:
-      - completed
+  # workflow_run:
+  #   workflows: ["Make forecast models"]
+  #   types:
+  #     - completed
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
           cache: 'pip'
@@ -43,3 +43,4 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           push_options: '--force'
+          skip_fetch: false

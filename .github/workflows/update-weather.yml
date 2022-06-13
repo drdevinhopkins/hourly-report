@@ -4,8 +4,8 @@
 name: Update weather
 
 on:
-  push:
-    branches: [main]
+  # push:
+  #   branches: [main]
   workflow_run:
     workflows: ["Update data with current hourly report"]
     types:
@@ -32,3 +32,4 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           push_options: '--force'
+          skip_fetch: false
