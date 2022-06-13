@@ -4,8 +4,8 @@
 name: Update daily visits
 
 on:
-  # repository_dispatch:
-  #   types: [update-daily-visit-forecast]
+  repository_dispatch:
+    types: [update-daily-visit-forecast]
   # push:
   #   branches: [main]
   # pull_request:
