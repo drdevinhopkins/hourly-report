@@ -175,14 +175,13 @@ since2020_df.ds = pd.to_datetime(since2020_df.ds)
 since2020_df = pd.concat([since2020_df, output_df], ignore_index=True)
 
 since2020_df = since2020_df.drop_duplicates(
-    subset='ds', keep="last").sort_values(by=['ds'], ascending=False)
+    subset='ds', keep="last").sort_values(by=['ds'], ascending=True)
 
 since2020_df.to_csv("data/since-2020.csv", index=False)
-since2020_df.to_excel("data/since-2020.xlsx", index=False)
+# since2020_df.to_excel("data/since-2020.xlsx", index=False)
 since2020_df.head(14*24).to_csv("data/recent.csv", index=False)
 since2020_df.head(1).to_csv('data/current.csv', index=False)
 
 
-
-for file in ['since-2020.csv', 'since-2020.xlsx', 'recent.csv', 'current.csv']:
+for file in ['since-2020.csv', 'recent.csv', 'current.csv']:
     data.put(file, path='data/'+file)
