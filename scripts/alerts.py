@@ -21,7 +21,7 @@ def load_data():
 
     current = df.iloc[0]
 
-    current_ds = df.head(1).iloc[0].ds
+    current_ds = df.tail(1).iloc[0].ds
 
     return df, forecast, current, current_ds
 
@@ -140,7 +140,7 @@ if alerts:
 
             myMessageSection.addFact(row['metric'], str(row['value']))
 
-            create_fig(df,forecast,row['metric'])
+            create_fig(df, forecast, row['metric'])
 
         myTeamsMessage.addSection(myMessageSection)
 
