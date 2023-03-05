@@ -1,0 +1,62 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Update data with current hourly report
+
+on:
+  repository_dispatch:
+    types: [hourly_data_updated, manually_trigger_data_update]
+  # push:
+  #   branches: [main]
+  # pull_request:
+  #   branches: [main]
+  # schedule:
+    # * is a special character in YAML so you have to quote this string
+    # - cron: "10,15,20,25,30,35 * * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+      - run: pip install -r update-requirements.txt
+      - name: Setup timezone
+        uses: zcong1993/setup-timezone@master
+        with:
+          timezone: America/Toronto
+      - name: Update data
+        env:
+          DETA_PROJECT_KEY: ${{ secrets.DETA_PROJECT_KEY }}
+        run: |
+          python scripts/hourly-data-update.py
+      - name: Alerts
+        run: python scripts/alerts.py
+        env:
+          TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK }}
+      - name: Update weather
+        env:
+          DETA_PROJECT_KEY: ${{ secrets.DETA_PROJECT_KEY }}
+        run: |
+          python scripts/updateWeather.py
+      - name: Update daily visits
+        env:
+          DETA_PROJECT_KEY: ${{ secrets.DETA_PROJECT_KEY }}
+        run: |
+          python scripts/daily-visits-update.py
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          push_options: '--force'
+          skip_fetch: false
+      - uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: drdevinhopkins
+          repo: hourly-report-neuralprophet
+          github_token: ${{ secrets.G_ACCESS_TOKEN }}
+          workflow_file_name: make_forecasts.yml
+          wait_workflow: false
+

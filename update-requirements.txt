@@ -1,0 +1,8 @@
+pandas
+tabula-py
+plotly
+openpyxl
+pymsteams
+python-dotenv
+kaleido
+deta
