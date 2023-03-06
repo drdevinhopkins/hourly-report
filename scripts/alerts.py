@@ -15,13 +15,15 @@ def load_data():
 
     df.ds = pd.to_datetime(df.ds)
 
+    df = df.sort_values(by='ds', ascending=False)
+
     forecast = pd.read_csv('data/forecast.csv')
 
     forecast.ds = pd.to_datetime(forecast.ds)
 
     current = df.iloc[0]
 
-    current_ds = df.head(1).iloc[0].ds
+    current_ds = df.ds.max()
 
     return df, forecast, current, current_ds
 
