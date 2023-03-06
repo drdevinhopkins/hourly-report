@@ -179,8 +179,8 @@ since2020_df = since2020_df.drop_duplicates(
 
 since2020_df.to_csv("data/since-2020.csv", index=False)
 # since2020_df.to_excel("data/since-2020.xlsx", index=False)
-since2020_df.head(14*24).to_csv("data/recent.csv", index=False)
-since2020_df.head(1).to_csv('data/current.csv', index=False)
+since2020_df.tail(14*24).to_csv("data/recent.csv", index=False)
+since2020_df.tail(1).to_csv('data/current.csv', index=False)
 
 
 for file in ['since-2020.csv', 'recent.csv', 'current.csv']:
