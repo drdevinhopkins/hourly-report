@@ -21,7 +21,7 @@ def load_data():
 
     forecast.ds = pd.to_datetime(forecast.ds)
 
-    current = df.tail(1).iloc[0]
+    current = df.head(1).iloc[0]
 
     current_ds = df.ds.max()
 

@@ -34,10 +34,10 @@ jobs:
           DETA_PROJECT_KEY: ${{ secrets.DETA_PROJECT_KEY }}
         run: |
           python scripts/hourly-data-update.py
-#       - name: Alerts
-#         run: python scripts/alerts.py
-#         env:
-#           TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK }}
+      - name: Alerts
+        run: python scripts/alerts.py
+        env:
+          TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK }}
       - name: Update weather
         env:
           DETA_PROJECT_KEY: ${{ secrets.DETA_PROJECT_KEY }}
