@@ -29,6 +29,11 @@ jobs:
         uses: zcong1993/setup-timezone@master
         with:
           timezone: America/Toronto
+      - name: Get data from Deta
+        env:
+          DETA_PROJECT_KEY: ${{ secrets.DETA_PROJECT_KEY }}
+        run: |
+          python scripts/getdata.py
       - name: Update data
         env:
           DETA_PROJECT_KEY: ${{ secrets.DETA_PROJECT_KEY }}
@@ -48,10 +53,10 @@ jobs:
           DETA_PROJECT_KEY: ${{ secrets.DETA_PROJECT_KEY }}
         run: |
           python scripts/daily-visits-update.py
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          push_options: '--force'
-          skip_fetch: false
+#       - uses: stefanzweifel/git-auto-commit-action@v4
+#         with:
+#           push_options: '--force'
+#           skip_fetch: false
       - uses: convictional/trigger-workflow-and-wait@v1.6.1
         with:
           owner: drdevinhopkins
