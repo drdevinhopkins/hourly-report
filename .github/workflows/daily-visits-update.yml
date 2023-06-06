@@ -44,7 +44,7 @@ jobs:
           DETA_PROJECT_KEY: ${{ secrets.DETA_PROJECT_KEY }}
         run: |
           python scripts/daily-visits-forecast.py
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          push_options: '--force'
-          skip_fetch: false
+#       - uses: stefanzweifel/git-auto-commit-action@v4
+#         with:
+#           push_options: '--force'
+#           skip_fetch: false
