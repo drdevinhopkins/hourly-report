@@ -1,3 +1,4 @@
 pandas
 prophet
 deta
+python-dotenv
