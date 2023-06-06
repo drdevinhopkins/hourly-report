@@ -8,8 +8,8 @@ name: Make forecast models
     # * is a special character in YAML so you have to quote this string
     # - cron: "40 * * * *"
 on:
-  # push:
-  #   branches: [main]
+  push:
+    branches: [main]
   workflow_run:
     workflows: ["Update data with current hourly report"]
     types:
