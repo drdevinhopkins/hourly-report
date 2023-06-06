@@ -2,6 +2,16 @@ import pandas as pd
 from prophet import Prophet
 import datetime
 
+import os
+from deta import Deta
+from dotenv import load_dotenv
+
+load_dotenv()
+
+deta = Deta(os.environ.get("DETA_PROJECT_KEY"))
+
+forecasts = deta.Drive("forecasts")
+
 df = pd.read_csv('data/since-2020.csv')
 df.ds = pd.to_datetime(df.ds)
 
@@ -30,3 +40,6 @@ for column in df.columns.to_list():
         print(column + ' failed')
 
 output.to_csv('data/forecast.csv', index=False)
+
+for file in ['forecast.csv']:
+    forecasts.put(file, path='data/'+file)
