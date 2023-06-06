@@ -6,13 +6,12 @@ name: Update daily visits
 on:
   repository_dispatch:
     types: [update-daily-visit-forecast]
-  # push:
-  #   branches: [main]
+  push:
+    branches: [main]
   # pull_request:
   #   branches: [main]
-  # schedule:
-    # * is a special character in YAML so you have to quote this string
-    # - cron: "15 0 * * *"
+  schedule:
+    - cron: "15 0 * * *"
 # on:
   # workflow_run:
   #   workflows: ["Make forecast models"]
