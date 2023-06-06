@@ -38,6 +38,8 @@ jobs:
       - name: Update data
         run: |
           python scripts/daily-visits-update.py
+        env:
+          DETA_PROJECT_KEY: ${{ secrets.DETA_PROJECT_KEY }}
       - name: Update forecast
         run: |
           python scripts/daily-visits-forecast.py
