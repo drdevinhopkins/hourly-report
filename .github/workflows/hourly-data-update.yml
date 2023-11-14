@@ -4,15 +4,15 @@
 name: Update data with current hourly report
 
 on:
-  repository_dispatch:
-    types: [hourly_data_updated, manually_trigger_data_update]
+  # repository_dispatch:
+    # types: [hourly_data_updated, manually_trigger_data_update]
   push:
     branches: [main]
   # pull_request:
   #   branches: [main]
-  # schedule:
+  schedule:
     # * is a special character in YAML so you have to quote this string
-    # - cron: "8 * * * *"
+    - cron: "8 * * * *"
 
 jobs:
   build:
